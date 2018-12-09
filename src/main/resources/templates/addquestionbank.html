@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>添加题库</title>
+        <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+    </head>
+    <body>
+        <span th:text="${err_msg}" th:if="${not #strings.isEmpty(err_msg)}"></span>
+        <form name="addquestionbank" method="post" action="#" th:action="@{/addquestionbank}">
+            <input type="text" name="bankname" id="bankname"><span id="bankname_err"></span><br/>
+            <input id="addbank_btn" type="button" value="提交">
+        </form>
+    </body>
+
+    <script>
+        $(document).ready(function(){
+            checkSubmit();
+            checkBlur();
+        });
+
+        function checkBankName() {
+            var bankname=$('#bankname').val();
+            var flag=false;
+            if(bankname==""){
+                $("#bankname_err").html("<font color='red'>"+"题库名不能为空"+"</font>");
+                flag=false;
+            }
+            else if(bankname.length>8){
+                $("#bankname_err").html("<font color='red'>"+"题库名不能超过8个字符"+"</font>");
+                flag=false;
+            }
+            else{
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: "/checkbankname",
+                    dataType: 'json',
+                    data: {"bankname":bankname},
+                    success: function(data){
+                        if(data==false)
+                            $("#bankname_err").html("<font color='red'>"+"题库已存在"+"</font>");
+                        else
+                            $("#bankname_err").empty();
+                        flag=data;
+                    },
+                    error: function(e){
+                        alert("error");
+                    }
+                })
+            }
+            return flag;
+        }
+
+        function checkSubmit() {
+            $("#addbank_btn").click(function(){
+                if(checkBankName()){
+                    $('#addbank_btn').attr('type','submit');
+                }
+            });
+        }
+
+        function checkBlur() {
+            $('#bankname').blur(function(){
+                checkBankName();
+            });
+        }
+
+    </script>
+
+</html>

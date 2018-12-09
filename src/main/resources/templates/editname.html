@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>修改姓名</title>
+        <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+    </head>
+    <body>
+        <span th:text="${err_msg}" th:if="${not #strings.isEmpty(err_msg)}"></span>
+        <form name="editname" method="post" action="#" th:action="@{/editname}">
+            <input type="text" name="name" id="name" th:value="${session.user.getName()}"><span id="name_err"></span><br/>
+            <input id="editname_btn" type="button" value="确定">
+        </form>
+    </body>
+
+    <script>
+        $(document).ready(function(){
+            checkBlur();
+            checkSubmit();
+        })
+
+        function checkName() {
+            if($("#name").val()==""){
+                $("#name_err").html("<font color='red'>"+"姓名不能为空"+"</font>");
+                return false;
+            }
+            else if($("#name").val().length>12){
+                $("#name_err").html("<font color='red'>"+"姓名长度过长"+"</font>");
+                return false;
+            }
+            else{
+                $("#name_err").empty();
+                return true;
+            }
+        }
+
+        function checkBlur() {
+            $("#name").blur(function(){
+                checkName();
+            })
+        }
+
+        function checkSubmit(){
+            $("#editname_btn").click(function(){
+                if(checkName())
+                    $('#editname_btn').attr('type','submit');
+            })
+        }
+
+
+    </script>
+</html>

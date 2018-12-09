@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>修改邮箱</title>
+        <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+    </head>
+    <body>
+        <span th:text="${err_msg}" th:if="${not #strings.isEmpty(err_msg)}"></span>
+        <form name="editmail" method="post" action="#" th:action="@{/editmail}">
+            <span id="oldmail" th:text="${session.user.getMail()}"></span><br/>
+            <input type="text" name="mail" id="mail"><span id="mail_err"></span><br/>
+            <input type="text" name="mail_two" id="mail_two"><span id="mailtwo_err"></span><br/>
+            <input id="editmail_btn" type="button" value="提交">
+        </form>
+    </body>
+    
+    <script>
+        $(document).ready(function(){
+            checkSubmit();
+            checkBlur();
+        });
+
+        function checkMailOne() {
+            var isEmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+            var mail=$('#mail').val();
+            var flag=false;
+            if(mail == ""){
+                $("#mail_err").html("<font color='red'>"+"邮箱不能为空"+"</font>");
+                flag=false;
+            }
+            else if(!(isEmail.test(mail))){
+                $("#mail_err").html("<font color='red'>"+"邮箱格式不正确"+"</font>");
+                flag=false;
+            }
+            else{
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: "/checkmail",
+                    dataType: 'json',
+                    data: {"mail":mail},
+                    success: function(data){
+                        if(data==false)
+                            $("#mail_err").html("<font color='red'>"+"邮箱已注册"+"</font>");
+                        else
+                            $("#mail_err").empty();
+                        flag=data;
+                    },
+                    error: function(e){
+                        alert("error");
+                    }
+                })
+            }
+            return flag;
+        }
+
+        function checkMailTwo() {
+            var mail=$('#mail_two').val();
+            if(mail == ""){
+                $("#mailtwo_err").html("<font color='red'>"+"确认邮箱不能为空"+"</font>");
+                return false;
+            }
+            else if(mail!=$('#mail').val()){
+                $("#mailtwo_err").html("<font color='red'>"+"两次输入邮箱不一致"+"</font>");
+                return false;
+            }
+            else{
+                $("#mailtwo_err").empty();
+                return true;
+            }
+        }
+        
+        function checkSubmit() {
+            $("#editmail_btn").click(function(){
+                var checkmailone=checkMailOne();
+                var checkmailtwo=checkMailTwo();
+                if(checkmailone&&checkmailtwo){
+                    $('#editmail_btn').attr('type','submit');
+                }
+            })
+        }
+
+        function checkBlur() {
+            $('#mail').blur(function(){
+                checkMailOne();
+            });
+            $('#mail_two').blur(function(){
+                checkMailTwo();
+            });
+        }
+        
+    </script>
+</html>

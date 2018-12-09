@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>题库管理</title>
+    <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+</head>
+<body>
+    <form action="searchquestionbank">
+        <input type="text" name="search" id="search" />
+        <input type="button" value="搜索" id="search_submit" onclick="checkSearch()" />
+    </form>
+    <div th:if="${exercisers != null}">
+        <table>
+            <tr>
+                <th>题库名字</th>
+                <th>操作</th>
+            </tr>
+            <tr th:each="bank : ${banks}">
+                <td th:text="${bank.name}">Onions</td>
+                <a href="#" th:value="${bank.name}"></a>
+            </tr>
+        </table>
+    </div>
+    <div th:if="${exercisers != null}">
+
+    </div>
+</body>
+</html>
