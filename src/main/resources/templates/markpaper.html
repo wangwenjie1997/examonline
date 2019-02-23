@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>试卷</title>
+
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        .indexList{
+            text-align: left;
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+        .indexList li{
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+<input type="hidden" id="paperId" th:value="${exam_paper_id}" />
+<input type="hidden" id="userId" th:value="${exam_paper_userId}" />
+<input type="hidden" id="type" th:value="${exam_paper_type}" />
+
+<div class="cont" style="margin-top: 80px;">
+    <div class="row" id="exam_div">
+        <div class="col-xs-12 col-sm-6 col-sm-offset-1">
+            <div class="widget-box">
+                <div class="widget-header">
+                    <input type="hidden" id="kindId">
+                    <input type="hidden" id="paperContentId">
+                    <h4 class="widget-title" id="questionInfo">
+                        <span id="paper_question_num"></span>
+                        <span id="question_type"></span>
+                        <span id="question_mark"></span>
+                    </h4>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <div class="control-group">
+
+                            <div id="questionContent"></div>
+
+                            <div id="oneOption_div">
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="A" id="radioA" disabled>
+                                        <span class="lbl" id="oneOptionA"></span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="B" id="radioB" disabled>
+                                        <span class="lbl" id="oneOptionB"></span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="C" id="radioC" disabled>
+                                        <span class="lbl" id="oneOptionC"></span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="D" id="radioD" disabled>
+                                        <span class="lbl" id="oneOptionD"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="moreOption_div">
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="A" id="checkboxA" disabled>
+                                        <span class="lbl" id="moreOptionA"></span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="B" id="checkboxB" disabled>
+                                        <span class="lbl" id="moreOptionB"></span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="C" id="checkboxC" disabled>
+                                        <span class="lbl" id="moreOptionC"></span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="D" id="checkboxD" disabled>
+                                        <span class="lbl" id="moreOptionD"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="trueOrFalse_div">
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace trueorfalseradio" data-val="T" id="radioT" disabled>
+                                        <span class="lbl" id="true">正确</span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace trueorfalseradio" data-val="F" id="radioF" disabled>
+                                        <span class="lbl" id="false">错误</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="fillInBlank_div">
+                                <label for="fillInBlank">答案</label>
+                                <input type="text" id="fillInBlank" class="form-control" disabled >
+                            </div>
+
+                            <div id="shortAnswer_div">
+                                <label for="shortAnswer">答案</label>
+                                <textarea class="form-control" id="shortAnswer" rows="10" disabled></textarea>
+                            </div>
+                            <div id="grade_div">
+                                <label for="markGrade">分数:</label>
+                                <input type="text" onblur="checkMarkGrade()" id="markGrade">
+                                <span id="markGrade_err"></span>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="widget-footer">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button class="btn btn-primary btn-block" onclick="getPreQuestion()">上一题</button>
+                        </div>
+                        <div class="col-xs-6">
+                            <button class="btn btn-primary btn-block" onclick="getNextQuestion()">下一题</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-4 ">
+            <div class="widget-box">
+                <div class="widget-header">
+                    <div class="widget-title" id="markGrade_result"></div>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main text-center">
+                        <div><span id="paperName"></span></div>
+                        <div>题目列表</div>
+                        <input type="hidden" id="selectLiId" value="0">
+                        <input type="hidden" id="selectResultId" value="0">
+                        <ul class="indexList" id="ulQuestionId">
+
+                        </ul>
+                        <div>
+                            <button id="submitMark_btn" class="btn btn-danger btn-block" onclick="checkSubmitMarkGrade()">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row" id="finish_div">
+        <div class="well text-center">
+            <h1 class="grey lighter smaller" id="finish_msg">批改完成</h1>
+            <div>
+                <img class="nav-user-photo" src="assets/images/myimages/finish.png" alt="mark finished">
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误弹窗 -->
+    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        错误信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <span id="span_error"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 提交批改 -->
+    <div class="modal fade" id="submit_grade_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        确认批改
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    没有批改的题目默认为0分
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        取消
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="submitMarkGrade()">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+</div>
+
+<!-- basic scripts -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<!--[if !IE]> -->
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        initPage();
+    })
+
+    function initPage() {
+        var paperId=$("#paperId").val();
+        var userId=$("#userId").val();
+        if($("#type").val()=='tea_mark'){//批改试卷
+            $("#grade_div").removeClass('hide');
+
+            $.ajax({//防止在批改完成后没有刷新旧网页再次点击批改
+                async: false,
+                type: 'POST',
+                url: "/checkexamgrade",
+                dataType: 'json',
+                data: {"paperId": paperId,"userId":userId},
+                success: function (data) {
+                    if(data==true){//已批改
+                        $("#finish_msg").html('批改完成');
+                        $("#exam_div").addClass('hide');
+                        $("#finish_div").removeClass('hide');
+                    }
+                    else {//未批改
+                        $("#exam_div").removeClass('hide');
+                        $("#finish_div").addClass('hide');
+                        $("#submitMark_btn").removeClass('hide');
+                        showLi();
+                    }
+                },
+                error: function (e) {
+                    alert("error1");
+                }
+            })
+
+        }
+        else if($("#type").val()=='tea_show'){//教师查看试卷
+            $("#grade_div").removeClass('hide');
+            $("#submitMark_btn").addClass('hide');
+            $("#finish_div").addClass('hide');
+            showLi();
+        }
+        else if($("#type").val()=='stu_show'){//学生查看试卷
+            $("#submitMark_btn").addClass('hide');
+
+            $.ajax({//检测学生有没有参加考试和考试成绩
+                async: false,
+                type: 'POST',
+                url: "/checkjoinexam",
+                dataType: 'json',
+                data: {"paperId": paperId,"userId":userId},
+                success: function (data) {
+                    if(data.json_joinexam==true){//参加
+                        $("#finish_div").addClass('hide');
+                        if(data.json_check==true){//已批改
+                            $("#grade_div").removeClass('hide');
+                        }
+                        else {//未批改
+                            $("#grade_div").addClass('hide');
+                        }
+                        showLi();
+                    }
+                    else {//未参加
+                        $("#finish_msg").html('你未参加该场考试');
+                        $("#exam_div").addClass('hide');
+                        $("#finish_div").removeClass('hide');
+                    }
+
+                },
+                error: function (e) {
+                    alert("error1");
+                }
+            })
+        }
+    }
+
+    function showLi() {
+        var paperId=$("#paperId").val();
+        var userId=$("#userId").val();
+        var type=$("#type").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getmarkpaper",
+            dataType: 'json',
+            data: {"paperId":paperId,"userId":userId},
+            success: function(data) {
+                $("#paperName").html(data.paperName);
+                var questionNum = 0;
+                var str = "";
+                var firResultId;
+                <!--加载序号-->
+                for (var k in data.oneOption) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        firResultId=data.oneOption[0].resultId;
+                    if(data.oneOption[k].resultCheck==0||type=='stu_show')
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.oneOption[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    else if(data.oneOption[k].resultCheck==1)
+                        str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.oneOption[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                }
+                for (var k in data.moreOption) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        firResultId=data.moreOption[0].resultId;
+                    if(data.moreOption[k].resultCheck==0||type=='stu_show')
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.moreOption[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    else if(data.moreOption[k].resultCheck==1)
+                        str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.moreOption[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                }
+                for (var k in data.trueOrFalse) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        firResultId=data.trueOrFalse[0].resultId;
+                    if(data.trueOrFalse[k].resultCheck==0||type=='stu_show')
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.trueOrFalse[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    else if(data.trueOrFalse[k].resultCheck==1)
+                        str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.trueOrFalse[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                }
+                for (var k in data.fillInBlank) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        firResultId=data.fillInBlank[0].resultId;
+                    if(data.fillInBlank[k].resultCheck==0||type=='stu_show')
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.fillInBlank[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    else if(data.fillInBlank[k].resultCheck==1)
+                        str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.fillInBlank[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                }
+                for (var k in data.shortAnswerQuestion) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        firResultId=data.shortAnswerQuestion[0].resultId;
+                    if(data.shortAnswerQuestion[k].resultCheck==0||type=='stu_show')
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.shortAnswerQuestion[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    else if(data.shortAnswerQuestion[k].resultCheck==1)
+                        str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.shortAnswerQuestion[k].resultId + "," + questionNum + ")'>" + questionNum + "</li>";
+                }
+                <!--加载题目-->
+                if (questionNum > 0) {
+                    $("#ulQuestionId").html(str);
+                    showNewQuestion(firResultId,1)
+                }
+                else {
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    showError("当前试卷没有题目");
+                }
+
+            },
+            error: function(e){
+                alert("error2");
+            }
+        })
+    }
+
+    function getPreQuestion() {
+        var selectLiId=Number($("#selectLiId").val());
+        var newSelectLiId;
+        if(selectLiId>1){
+            newSelectLiId=selectLiId-1;
+            var strLiId="#"+newSelectLiId;
+            $(strLiId).trigger("onclick");
+        }
+    }
+
+    function getNextQuestion() {
+        var selectLiId=Number($("#selectLiId").val());
+        var newSelectLiId;
+        if(selectLiId<$("#ulQuestionId li").length){
+            newSelectLiId=selectLiId+1;
+            var strLiId="#"+newSelectLiId;
+            $(strLiId).trigger("onclick");
+        }
+    }
+
+    function updateOldResult() {
+        var markGrade=$("#markGrade").val();
+        var liId=$("#selectLiId").val();
+        var resultId=$("#selectResultId").val();
+        var type=$("#type").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/submitresultmark",
+            dataType: 'json',
+            data: {"resultId": resultId,"resultMark":markGrade},
+            success: function (data) {
+                if(data==true&&type!='stu_show')
+                    $('#'+liId).addClass("btn-primary");
+            },
+            error: function (e) {
+                alert("error3");
+            }
+        })
+    }
+
+    function showNewQuestion(resultId,liId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpaperresult",
+            dataType: 'json',
+            data: {"resultId":resultId},
+            success: function(data){
+                var kindId=data.paperContent.question.questionKind.kindId;
+                $("#kindId").val(kindId);
+                $("#paperContentId").val(data.paperContent.paperCotentId);
+                $("#paper_question_num").html("题"+liId+"    ");
+                $("#question_type").html(data.paperContent.question.questionKind.kindName+"   ");
+                $("#question_mark").html(data.paperContent.questionMark+"分");
+                $("#questionContent").html(data.paperContent.question.questionContent);
+
+                $("input[type='radio']").removeAttr('checked');
+                $("input[type='checkbox']").removeAttr('checked');
+                $("#fillInBlank").val("");
+                $("#shortAnswer").val("");
+
+
+                if(kindId==1){
+                    $("#oneOption_div").removeClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    $("#oneOptionA").html(data.paperContent.question.optionA);
+                    $("#oneOptionB").html(data.paperContent.question.optionB);
+                    $("#oneOptionC").html(data.paperContent.question.optionC);
+                    $("#oneOptionD").html(data.paperContent.question.optionD);
+
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer.toUpperCase();
+                        if(resultAnsewer=='A'||resultAnsewer=='B' ||resultAnsewer=='C'||resultAnsewer=='D'){
+                            var strRadioId="#radio"+resultAnsewer;
+                            $(strRadioId).prop("checked",true);
+                        }
+                    }
+                }
+                else if (kindId==2){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").removeClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    $("#moreOptionA").html(data.paperContent.question.optionA);
+                    $("#moreOptionB").html(data.paperContent.question.optionB);
+                    $("#moreOptionC").html(data.paperContent.question.optionC);
+                    $("#moreOptionD").html(data.paperContent.question.optionD);
+
+                    var flag=true;
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer.toUpperCase();
+                        var arrayAnswer=resultAnsewer.split('');
+                        for(var i=0;i<arrayAnswer.length;i++){
+                            if(arrayAnswer[i]!='A'&&arrayAnswer[i]!='B'&&arrayAnswer[i]!='C'&&arrayAnswer[i]!='D'){
+                                flag=false;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        flag=false;
+                    }
+
+                    if(flag==true){
+                        var resultArrayAnswer=data.resultAnsewer.toUpperCase().split('');
+                        for(var i=0;i<resultArrayAnswer.length;i++){
+                            var strCheckBoxId="#checkbox"+resultArrayAnswer[i];
+                            $(strCheckBoxId).prop("checked",true);
+                        }
+                    }
+
+                }
+                else if (kindId==3){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").removeClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer.toUpperCase();
+                        if(resultAnsewer=='T'||resultAnsewer=='F'){
+                            var strRadioId="#radio"+resultAnsewer;
+                            $(strRadioId).prop("checked",true);
+                        }
+                    }
+
+                }
+                else if (kindId==4){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").removeClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer;
+                        if(resultAnsewer!=''){
+                            $("#fillInBlank").val(resultAnsewer);
+                        }
+                    }
+                }
+                else if (kindId==5){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").removeClass("hide");
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer;
+                        if(resultAnsewer!=''){
+                            $("#shortAnswer").val(resultAnsewer);
+                        }
+                    }
+                }
+
+                if($("#type").val()=='tea_show'||$("#type").val()=='stu_show')
+                    $("#markGrade").attr("disabled", "true");
+
+                if(data.resultCheck==0)
+                    $("#markGrade").val("");
+                else if(data.resultCheck==1)
+                    $("#markGrade").val(data.resultMark);
+            },
+            error: function(e){
+                alert("error4");
+            }
+        })
+
+        // var newStrLiId="#"+liId;
+        // var oldLiId=$("#selectLiId").val();
+        // var oldStrLiId="#"+oldLiId;
+        // if(answer!="")
+        //     $(oldStrLiId).attr("class","btn btn-primary");
+        // else if(answer=="")
+        //     $(oldStrLiId).attr("class","btn");
+
+        // $(newStrLiId).attr("class","btn btn-primary");
+        $("#selectLiId").val(liId);
+        $("#selectResultId").val(resultId);
+    }
+
+    function showOneQuestion(resultId,liId) {
+        if($("#type").val()=='tea_mark'){//批改试卷
+            if(checkMarkGrade()){//给的分数没问题
+                updateOldResult();
+                showNewQuestion(resultId,liId);
+            }
+
+        }
+        else if($("#type").val()=='tea_show'||$("#type").val()=='stu_show'){//查看试卷
+            showNewQuestion(resultId,liId);
+        }
+
+    }
+
+    function showError(err_msg) {
+        $("#span_error").html(err_msg);
+        $('#error').modal('show');
+    }
+    
+    function checkMarkGrade() {
+        var markGrade=$("#markGrade").val();
+        var questionGrade=$("#question_mark").html();
+        var flag=true;
+
+        if(markGrade==""){
+            $("#markGrade_err").html("<font color='red'>分数不能为空</font>");
+            flag=false;
+        }
+        else {
+            if(!isNaN(markGrade)){//是数字
+                if(Number(markGrade)>Number(questionGrade)){
+                    $("#markGrade_err").html("<font color='red'>分数不能大于设定分数</font>");
+                    flag=false;
+                }
+            }
+            else if(isNaN(markGrade)) {//非数字
+                $("#markGrade_err").html("<font color='red'>请填写数字</font>");
+                flag=false;
+            }
+        }
+        if(flag==true)
+            $("#markGrade_err").empty();
+        return flag;
+    }
+
+    function checkSubmitMarkGrade() {
+        $("#submit_grade_modal").modal('show');
+    }
+
+    function submitMarkGrade() {
+        var paperId=$("#paperId").val();
+        var userId=$("#userId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/setexamgrade",
+            dataType: 'json',
+            data: {"paperId": paperId,"userId":userId},
+            success: function (data) {
+                $("#submit_grade_modal").modal('hide');
+                if(data==true){
+                    $("#exam_div").addClass('hide');
+                    $("#finish_div").removeClass('hide');
+                }
+                else {
+                    $("#exam_div").removeClass('hide');
+                    $("#finish_div").addClass('hide');
+                    showError("提交失败");
+                }
+            },
+            error: function (e) {
+                alert("error5");
+            }
+        })
+    }
+
+</script>
+
+
+</body>
+</html>

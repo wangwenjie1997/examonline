@@ -2,11 +2,14 @@ package com.wwj.examonline.entity;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class QuestionBank {
 
-    private int bankid;
+    private int bankId;
     private User user;
-    private String bankname;
+    private String bankName;
+    private List<Question> questions;
 
 }

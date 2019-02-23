@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>试卷预览</title>
+
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        .indexList{
+            text-align: left;
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+        .indexList li{
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+<input type="hidden" id="paperId" th:value="${exam_paper_id}">
+<input type="hidden" id="joinStatu" th:value="${joinStatu}">
+
+<div class="cont" style="margin-top: 80px;">
+    <div class="row" id="exam_div">
+        <div class="col-xs-12 col-sm-6 col-sm-offset-1">
+            <div class="widget-box">
+                <div class="widget-header">
+                    <input type="hidden" id="kindId">
+                    <input type="hidden" id="paperContentId">
+                    <h4 class="widget-title" id="questionInfo"></h4>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <div class="control-group">
+
+                            <div id="questionContent"></div>
+
+                            <div id="oneOption_div">
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="A" id="radioA">
+                                        <span class="lbl" id="oneOptionA"></span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="B" id="radioB">
+                                        <span class="lbl" id="oneOptionB"></span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="C" id="radioC">
+                                        <span class="lbl" id="oneOptionC"></span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace oneoprionradio" data-val="D" id="radioD">
+                                        <span class="lbl" id="oneOptionD"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="moreOption_div">
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="A" id="checkboxA">
+                                        <span class="lbl" id="moreOptionA"></span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="B" id="checkboxB">
+                                        <span class="lbl" id="moreOptionB"></span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="C" id="checkboxC">
+                                        <span class="lbl" id="moreOptionC"></span>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="moreOption" type="checkbox" class="ace checkbox" data-val="D" id="checkboxD">
+                                        <span class="lbl" id="moreOptionD"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="trueOrFalse_div">
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace trueorfalseradio" data-val="T" id="radioT">
+                                        <span class="lbl" id="true">正确</span>
+                                    </label>
+                                </div>
+                                <div class="oneOption_radio_div">
+                                    <label>
+                                        <input name="oneOption" type="radio" class="ace trueorfalseradio" data-val="F" id="radioF">
+                                        <span class="lbl" id="false">错误</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="fillInBlank_div">
+                                <label for="fillInBlank">答案</label>
+                                <input type="text" id="fillInBlank" placeholder="多个填空的答案用','隔开，例:填空一答案，填空二答案" class="form-control">
+                            </div>
+
+                            <div id="shortAnswer_div">
+                                <label for="shortAnswer">答案</label>
+                                <textarea class="form-control" id="shortAnswer" rows="10"></textarea>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="widget-footer">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button class="btn btn-primary btn-block" onclick="getPreQuestion()">上一题</button>
+                        </div>
+                        <div class="col-xs-6">
+                            <button class="btn btn-primary btn-block" onclick="getNextQuestion()">下一题</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-4 ">
+            <div class="widget-box">
+                <div class="widget-header">
+                    <div class="widget-title"></div>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main text-center">
+                        <div><span id="paperName"></span></div>
+                        <div id="timeDown"></div>
+                        <div>题目列表</div>
+                        <input type="hidden" id="selectLiId" value="0">
+                        <ul class="indexList" id="ulQuestionId">
+
+                        </ul>
+                        <div>
+                            <button id="submitExam_btn" class="btn btn-danger btn-block" onclick="checkSubmitExam()">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row" id="finish_div">
+        <div class="well text-center">
+            <h1 class="grey lighter smaller">你已完成考试</h1>
+            <div>
+                <img class="nav-user-photo" src="assets/images/myimages/finish.png" alt="exam finished">
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误弹窗 -->
+    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        错误信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <span id="span_error"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--考试提交-->
+    <div class="modal fade" id="submit_exam" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        确认提交
+                    </h4>
+                </div>
+
+                <div class="modal-body">
+                    <span id="exam_submit_msg"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+
+                    <button id="examSubmit_btn" type="button" class="btn btn-primary" onclick="submitExam()">
+                        确定
+                    </button>
+
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+</div>
+
+<!-- basic scripts -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<!--[if !IE]> -->
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        var joinStatu=$("#joinStatu").val();
+        if(joinStatu==1) {//参加考试
+            $("#exam_div").removeClass('hide');
+            $("#finish_div").addClass('hide');
+            initPage();
+            showLastTime();
+        }
+        else if(joinStatu==2){//已提交
+            $("#exam_div").addClass('hide');
+            $("#finish_div").removeClass('hide');
+        }
+    })
+
+    function initPage() {
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getexampaper",
+            dataType: 'json',
+            data: {"paperId":paperId},
+            success: function(data) {
+                $("#paperName").html(data.paperName);
+                var questionNum = 0;
+                var str = "";
+                var paperContent;
+                <!--加载序号-->
+                for (var k in data.oneOption) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        paperContent=data.oneOption[k].paperContent.paperCotentId;
+                    if(data.oneOption[k].hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.oneOption[k].resultAnsewer.toUpperCase();
+                        if(resultAnsewer=='A'||resultAnsewer=='B' ||resultAnsewer=='C'||resultAnsewer=='D'){
+                            str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.oneOption[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                        }
+                        else
+                            str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.oneOption[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                    else {
+                        // console.log(questionNum+"   "+"==''");
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.oneOption[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+
+                }
+                for (var k in data.moreOption) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        paperContent=data.moreOption[k].paperContent.paperCotentId;
+                    var flag=true;
+                    if(data.moreOption[k].hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.moreOption[k].resultAnsewer.toUpperCase();
+                        var answer=resultAnsewer.split('');
+                        for(var i=0;i<answer.length;i++){
+                            if(answer[i]!='A'&&answer[i]!='B'&&answer[i]!='C'&&answer[i]!='D'){
+                                flag=false;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        flag=false;
+                    }
+                    if(flag==true){
+                        str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.moreOption[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                    else if (flag==false){
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.moreOption[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                }
+                for (var k in data.trueOrFalse) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        paperContent=data.trueOrFalse[k].paperContent.paperCotentId;
+                    if(data.trueOrFalse[k].hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.trueOrFalse[k].resultAnsewer.toUpperCase();
+                        if(resultAnsewer=='T'||resultAnsewer=='F'){
+                            str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.trueOrFalse[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                        }
+                        else
+                            str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.trueOrFalse[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                    else {
+                        // console.log(questionNum+"   "+"==''");
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.trueOrFalse[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                }
+                for (var k in data.fillInBlank) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        paperContent=data.fillInBlank[k].paperContent.paperCotentId;
+                    if(data.fillInBlank[k].hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.fillInBlank[k].resultAnsewer;
+                        if(resultAnsewer!=null&&resultAnsewer!=''){
+                            str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.fillInBlank[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                        }
+                        else
+                            str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.fillInBlank[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                    else {
+                        // console.log(questionNum+"   "+"==''");
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.fillInBlank[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                }
+                for (var k in data.shortAnswerQuestion) {
+                    str += "                            ";
+                    questionNum++;
+                    if(questionNum==1)
+                        paperContent=data.shortAnswerQuestion[k].paperContent.paperCotentId;
+                    if(data.shortAnswerQuestion[k].hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.shortAnswerQuestion[k].resultAnsewer;
+                        if(resultAnsewer!=null&&resultAnsewer!=''){
+                            str += "<li class='btn btn-primary' id='" + questionNum + "' onclick='showOneQuestion(" + data.shortAnswerQuestion[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                        }
+                        else
+                            str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.shortAnswerQuestion[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                    else {
+                        // console.log(questionNum+"   "+"==''");
+                        str += "<li class='btn' id='" + questionNum + "' onclick='showOneQuestion(" + data.shortAnswerQuestion[k].paperContent.paperCotentId + "," + questionNum + ")'>" + questionNum + "</li>";
+                    }
+                }
+                <!--加载第一题题目-->
+                if (questionNum > 0) {
+                    $("#ulQuestionId").html(str);
+                    showNewQuestion(paperContent,1);
+                    // $("#selectLiId").val(1);
+                    // var selectLiId = Number($("#selectLiId").val());
+                    // var strSelectLiId = "#" + $("#selectLiId").val();
+                    // if (selectLiId > 0)
+                    //     $(strSelectLiId).trigger("onclick");
+                }
+                else {
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    showError("当前试卷没有题目");
+                }
+
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    function getPreQuestion() {
+        var selectLiId=Number($("#selectLiId").val());
+        var newSelectLiId;
+        if(selectLiId>1){
+            newSelectLiId=selectLiId-1;
+        }
+        else
+            newSelectLiId=$("#ulQuestionId li").length;
+        var strLiId="#"+newSelectLiId;
+        $(strLiId).trigger("onclick");
+    }
+
+    function getNextQuestion() {
+        var selectLiId=Number($("#selectLiId").val());
+        var newSelectLiId;
+        if(selectLiId<$("#ulQuestionId li").length){
+            newSelectLiId=selectLiId+1;
+        }
+        else
+            newSelectLiId=1;
+        var strLiId="#"+newSelectLiId;
+        $(strLiId).trigger("onclick");
+    }
+
+    function updateOldResult() {
+        var oldKindId=$("#kindId").val();
+        var oldAnswer="";
+        if(oldKindId==1){
+            $('.ace.oneoprionradio').each(function (index, item) {
+                if (item.checked)
+                    oldAnswer=$(item).attr('data-val');
+            })
+        }
+        else if(oldKindId==2){
+            $('.ace.checkbox').each(function (index, item) {
+                if (item.checked)
+                    oldAnswer+=$(item).attr('data-val');
+            })
+        }
+        else if(oldKindId==3){
+            $('.ace.trueorfalseradio').each(function (index, item) {
+                if (item.checked)
+                    oldAnswer=$(item).attr('data-val');
+            })
+        }
+        else if(oldKindId==4){
+            oldAnswer=$("#fillInBlank").val();
+        }
+        else if(oldKindId==5){
+            oldAnswer=$("#shortAnswer").val();
+        }
+
+        //进行result数据更新
+        if(oldAnswer!=null){
+            var paperId=$("#paperId").val();
+            var paperContentId=$("#paperContentId").val();
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/updateresult",
+                dataType: 'json',
+                data: {"paperContentId":paperContentId,"answer":oldAnswer,"paperId":paperId},
+                success: function(data){
+                    if(data==false)
+                        showError("试卷出错");
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+
+        var oldLiId=$("#selectLiId").val();
+        var oldStrLiId="#"+oldLiId;
+        if(oldAnswer!="")
+            $(oldStrLiId).attr("class","btn btn-primary");
+        else if(oldAnswer=="")
+            $(oldStrLiId).attr("class","btn");
+    }
+
+    function showNewQuestion(paperContentId,liId){
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getexamquestionresult",
+            dataType: 'json',
+            data: {"paperContentId":paperContentId,"paperId":paperId},
+            success: function(data){
+                var kindId=data.paperContent.question.questionKind.kindId;
+                $("#kindId").val(kindId);
+                $("#paperContentId").val(data.paperContent.paperCotentId);
+                $("#questionInfo").html("题"+liId+"    "+data.paperContent.question.questionKind.kindName+"   "+data.paperContent.questionMark+"分");
+                $("#questionContent").html(data.paperContent.question.questionContent);
+
+                $("input[type='radio']").removeAttr('checked');
+                $("input[type='checkbox']").removeAttr('checked');
+                $("#fillInBlank").val("");
+                $("#shortAnswer").val("");
+
+
+                if(kindId==1){
+                    $("#oneOption_div").removeClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    $("#oneOptionA").html(data.paperContent.question.optionA);
+                    $("#oneOptionB").html(data.paperContent.question.optionB);
+                    $("#oneOptionC").html(data.paperContent.question.optionC);
+                    $("#oneOptionD").html(data.paperContent.question.optionD);
+
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer.toUpperCase();
+                        if(resultAnsewer=='A'||resultAnsewer=='B' ||resultAnsewer=='C'||resultAnsewer=='D'){
+                            var strRadioId="#radio"+resultAnsewer;
+                            $(strRadioId).prop("checked",true);
+                        }
+                    }
+                }
+                else if (kindId==2){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").removeClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    $("#moreOptionA").html(data.paperContent.question.optionA);
+                    $("#moreOptionB").html(data.paperContent.question.optionB);
+                    $("#moreOptionC").html(data.paperContent.question.optionC);
+                    $("#moreOptionD").html(data.paperContent.question.optionD);
+
+                    var flag=true;
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer.toUpperCase();
+                        var arrayAnswer=resultAnsewer.split('');
+                        for(var i=0;i<arrayAnswer.length;i++){
+                            if(arrayAnswer[i]!='A'&&arrayAnswer[i]!='B'&&arrayAnswer[i]!='C'&&arrayAnswer[i]!='D'){
+                                flag=false;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        flag=false;
+                    }
+
+                    if(flag==true){
+                        var resultArrayAnswer=data.resultAnsewer.toUpperCase().split('');
+                        for(var i=0;i<resultArrayAnswer.length;i++){
+                            var strCheckBoxId="#checkbox"+resultArrayAnswer[i];
+                            $(strCheckBoxId).prop("checked",true);
+                        }
+                    }
+
+                }
+                else if (kindId==3){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").removeClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer.toUpperCase();
+                        if(resultAnsewer=='T'||resultAnsewer=='F'){
+                            var strRadioId="#radio"+resultAnsewer;
+                            $(strRadioId).prop("checked",true);
+                        }
+                    }
+
+                }
+                else if (kindId==4){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").removeClass("hide");
+                    $("#shortAnswer_div").addClass("hide");
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer;
+                        if(resultAnsewer!=''){
+                            $("#fillInBlank").val(resultAnsewer);
+                        }
+                    }
+                }
+                else if (kindId==5){
+                    $("#oneOption_div").addClass("hide");
+                    $("#moreOption_div").addClass("hide");
+                    $("#trueOrFalse_div").addClass("hide");
+                    $("#fillInBlank_div").addClass("hide");
+                    $("#shortAnswer_div").removeClass("hide");
+                    if(data.hasOwnProperty('resultAnsewer')){
+                        var resultAnsewer=data.resultAnsewer;
+                        if(resultAnsewer!=''){
+                            $("#shortAnswer").val(resultAnsewer);
+                        }
+                    }
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+
+        // $(newStrLiId).attr("class","btn btn-primary");
+        $("#selectLiId").val(liId);
+    }
+
+    function showOneQuestion(paperContentId,liId) {
+        updateOldResult();
+        showNewQuestion(paperContentId,liId);
+    }
+
+    function showError(err_msg) {
+        $("#span_error").html(err_msg);
+        $('#error').modal('show');
+    }
+
+    function checkSubmitExam() {
+        $("#exam_submit_msg").html("是否确认提交");
+        $("#submit_exam").modal('show');
+    }
+
+    function submitExam() {
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/submitexam",
+            dataType: 'json',
+            data: {"paperId":paperId},
+            success: function(data){
+                $("#submit_exam").modal('hide');
+                if (data==true){
+                    $("#exam_div").addClass('hide');
+                    $("#finish_div").removeClass('hide');
+                }
+                else {
+                    showError("提交失败");
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+
+    }
+
+    <!--倒计时-->
+    function showLastTime() {
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpapertime",
+            dataType: 'json',
+            data: {"paperId":paperId},
+            success: function(data){
+                TimeDown('timeDown',data.paperEnd);
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+    
+    function TimeDown(id, endDateStr) {
+        //结束时间
+        var endDate = new Date(endDateStr);
+        //当前时间
+        var nowDate = new Date();
+        //相差的总秒数
+        var totalSeconds = parseInt((endDate - nowDate) / 1000);
+        //天数
+        var days = Math.floor(totalSeconds / (60 * 60 * 24));
+        //取模（余数）
+        var modulo = totalSeconds % (60 * 60 * 24);
+        //小时数
+        var hours = Math.floor(modulo / (60 * 60));
+        modulo = modulo % (60 * 60);
+        //分钟
+        var minutes = Math.floor(modulo / 60);
+        //秒
+        var seconds = modulo % 60;
+        //输出到页面
+        document.getElementById(id).innerHTML = "还剩:" + days + "天" + hours + "小时" + minutes + "分钟" + seconds + "秒";
+
+        if(days+hours+minutes+seconds==0)
+            submitExam();
+        //延迟一秒执行自己
+        setTimeout(function () {
+            TimeDown(id, endDateStr);
+        }, 1000)
+    }
+
+</script>
+
+
+</body>
+</html>

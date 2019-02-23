@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>添加题目</title>
+
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+    <link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css" />
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="no-skin">
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <div class="navbar-container ace-save-state" id="navbar-container">
+
+        <div class="navbar-header pull-left">
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+            <small class="navbar-brand">
+                <i class="fa fa-leaf"></i>
+                在线考试系统
+            </small>
+
+        </div>
+
+        <div class="navbar-buttons navbar-header pull-right" role="navigation">
+            <ul class="nav ace-nav">
+                <li class="light-blue dropdown-modal">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" height="40" width="40"
+                             th:src="${session.user.getPicPath()!=null}? (${session.user.getPicPath()}) : 'assets/images/myimages/user.jpg'"
+                             alt="头像"/>
+                        <span class="user-info">
+                                <small>欢迎登录</small>
+                                <span th:text="${session.user.getName()}" th:if="${session.user!=null}"></span>
+                        </span>
+
+                        <i class="ace-icon fa fa-caret-down"></i>
+                    </a>
+
+                    <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li>
+                            <a href="logout">
+                                <i class="ace-icon fa fa-power-off"></i>
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /.navbar-container -->
+</div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
+
+    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+        <script type="text/javascript">
+            try{ace.settings.loadState('sidebar')}catch(e){}
+        </script>
+
+        <ul class="nav nav-list">
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=index)}">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> 首页 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="active">
+                <a href="#" th:href="@{/gotopage(pagename=questionbank)}">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> 题库管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=papergroup)}">
+                    <i class="menu-icon fa fa-picture-o"></i>
+                    <span class="menu-text"> 试卷管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=markexam)}">
+                    <i class="menu-icon fa fa-pencil-square-o"></i>
+                    <span class="menu-text"> 试卷批阅 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=myexam)}">
+                    <i class="menu-icon fa fa-file-o"></i>
+                    <span class="menu-text"> 我的考试 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-tag"></i>
+                    <span class="menu-text"> 帐号管理 </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <b class="arrow"></b>
+
+                <ul class="submenu">
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editphoto)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改头像
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editname)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改姓名
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editmail)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改邮箱
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editpassword)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改密码
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                </ul>
+            </li>
+
+        </ul><!-- /.nav-list -->
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="main-content-inner">
+
+
+            <div class="page-content">
+
+                <div class="page-header">
+                    <h1>添加题目
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            <span th:text="${session.selected_bank.getBankName()}"></span>
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+
+                        <div class="widget-box">
+                            <div class="widget-header widget-header-blue widget-header-flat">
+                                <div class="col-sm-4">
+                                    <h4 class="widget-title lighter">
+                                        <input type="hidden" id="addQuestionResult_hidden" th:value="${err_msg}" th:if="${not #strings.isEmpty(err_msg)}">
+                                        <span id="addQuestionResult_span"></span>
+                                    </h4>
+                                </div>
+                                <div class="col-sm-8">
+                                    <button class="btn" th:each="questionkind:${question_kinds}" th:id="${questionkind.getKindId()}"
+                                            th:value="${questionkind.getKindName()}" th:onclick="'changeKind(\''+${questionkind.getKindId()}+'\')'">[[${questionkind.getKindName()}]] </button>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <div id="fuelux-wizard-container" class="no-steps-container">
+                                        <div class="step-content pos-rel">
+                                            <div class="active" data-step="1">
+                                                <div id="scroll_div" class="row pre-scrollable">
+                                                    <div class="col-xs-12">
+                                                        <!-- PAGE CONTENT BEGINS -->
+                                                        <div id="question_content_div">
+                                                            <h4 class="header green clearfix">试题
+                                                                <span id="question_content_err" >
+
+                                                                </span>
+                                                            </h4>
+                                                            <!--简答-->
+                                                            <div class="wysiwyg-editor" id="question_content_wysiwyg"></div>
+                                                        </div>
+                                                        <!--单选/多选-->
+                                                        <div class="hidden" id="options">
+                                                            <div id="optionA_div">
+                                                                <h4 class="header green clearfix">选项A
+                                                                    <span id="optionA_err"></span>
+                                                                </h4>
+                                                                <div class="wysiwyg-editor" id="optionA_wysiwyg"></div>
+                                                            </div>
+                                                            <div id="optionB_div">
+                                                                <h4 class="header green clearfix">选项B
+                                                                    <span id="optionB_err"></span>
+                                                                </h4>
+                                                                <div class="wysiwyg-editor" id="optionB_wysiwyg"></div>
+                                                            </div>
+                                                            <div id="optionC_div">
+                                                                <h4 class="header green clearfix">选项C
+                                                                    <span id="optionC_err"></span>
+                                                                </h4>
+                                                                <div class="wysiwyg-editor" id="optionC_wysiwyg"></div>
+                                                            </div>
+                                                            <div id="optionD_div">
+                                                                <h4 class="header green clearfix">选项D
+                                                                    <span id="optionD_err"></span>
+                                                                </h4>
+                                                                <div class="wysiwyg-editor" id="optionD_wysiwyg"></div>
+                                                            </div>
+                                                            <div id="option_answer_div">
+                                                                <h4 class="header green clearfix">答案
+                                                                    <span id="option_answer_err"></span>
+                                                                </h4>
+
+                                                                <div class="text-center">
+                                                                    <button class="btn btn-sm" id="option_answerA" onclick="selectOption('A','option_answerA')">A </button>
+                                                                    <button class="btn btn-sm" id="option_answerB" onclick="selectOption('B','option_answerB')">B</button>
+                                                                    <button class="btn btn-sm" id="option_answerC" onclick="selectOption('C','option_answerC')">C</button>
+                                                                    <button class="btn btn-sm" id="option_answerD" onclick="selectOption('D','option_answerD')">D</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--判断-->
+                                                        <div class="hidden" id="trueorfalse_div">
+                                                            <h4 class="header green clearfix">答案
+                                                                <span id="trueorfalse_answer_err"></span>
+                                                            </h4>
+                                                            <div class="text-center">
+                                                                <button class="btn btn-sm" id="true_answer" onclick="selectTrueOrFalse('T')">正确</button>
+                                                                <button class="btn btn-sm" id="false_answer" onclick="selectTrueOrFalse('F')">错误</button>
+                                                            </div>
+                                                        </div>
+                                                        <!--填空-->
+                                                        <div class="hidden" id="fillinblank_div">
+                                                            <h4 class="header green clearfix">答案
+                                                                <span id="fillinblank_answer_err"></span>
+                                                            </h4>
+                                                            <div class="text-center">
+                                                                <input type="text" id="fillinblank_input" placeholder="多个填空的答案用','隔开，例:填空一答案，填空二答案" class="form-control">
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- PAGE CONTENT ENDS -->
+                                                    </div><!-- /.col -->
+                                                </div><!-- /.row -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- /.widget-main -->
+                            </div><!-- /.widget-body -->
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <form method="post" action="#" th:action="@{/addquestion}">
+                        <input type="hidden" name="selected_kind" id="selected_kind" th:value="${selected_kind.getKindId()}"/>
+                        <input type="hidden" name="selected_bank" id="selected_bank" th:value="${session.selected_bank.getBankId()}">
+                        <input type="hidden" name="questioncontent" id="questioncontent" value="">
+                        <input type="hidden" name="optionacontent" id="optionacontent" value="">
+                        <input type="hidden" name="optionbcontent" id="optionbcontent" value="">
+                        <input type="hidden" name="optionccontent" id="optionccontent" value="">
+                        <input type="hidden" name="optiondcontent" id="optiondcontent" value="">
+                        <input type="hidden" name="answer" id="answer" value="">
+                        <div class="wizard-actions">
+                            <button class="btn btn-success btn-next" data-last="Finish"
+                                    id="add_question_btn" type="button" onclick="checkSubmit()">提交</button>
+                            &nbsp;&nbsp;
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+
+    <div class="footer">
+        <div class="footer-inner">
+            <div class="footer-content">
+						<span class="bigger-120">
+							<span class="blue bolder">在线考试系统</span>
+							王文杰 &copy; 2018
+						</span>
+            </div>
+        </div>
+    </div>
+
+
+</div><!-- /.main-container -->
+
+<!-- basic scripts -->
+
+<!--[if !IE]> -->
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+<script src="assets/js/jquery-ui.custom.min.js"></script>
+<script src="assets/js/jquery.ui.touch-punch.min.js"></script>
+<script src="assets/js/markdown.min.js"></script>
+<script src="assets/js/bootstrap-markdown.min.js"></script>
+<script src="assets/js/jquery.hotkeys.index.min.js"></script>
+<script src="assets/js/bootstrap-wysiwyg.min.js"></script>
+<script src="assets/js/bootbox.js"></script>
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        <!--初始化-->
+        initWysiwyg();
+        initPage();
+    });
+
+    function initPage() {
+        changeKind($("#selected_kind").val());
+        $("#addQuestionResult_span").html($("#addQuestionResult_hidden").val());
+    }
+
+    function initWysiwyg(){
+        $('textarea[data-provide="markdown"]').each(function(){
+            var $this = $(this);
+
+            if ($this.data('markdown')) {
+                $this.data('markdown').showEditor();
+            }
+            else $this.markdown()
+
+            $this.parent().find('.btn').addClass('btn-white');
+        })
+
+        function showErrorAlert (reason, detail) {
+            var msg='';
+            if (reason==='unsupported-file-type') { msg = "Unsupported format " +detail; }
+            else {
+                //console.log("error uploading file", reason, detail);
+            }
+            $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>'+
+                '<strong>File upload error</strong> '+msg+' </div>').prependTo('#alerts');
+        }
+
+        //$('#editor1').ace_wysiwyg();//this will create the default editor will all buttons
+
+        //but we want to change a few buttons colors for the third style
+        $('#question_content_wysiwyg').ace_wysiwyg({
+            toolbar:
+                [
+                    'font',
+                    null,
+                    'fontSize',
+                    null,
+                    {name:'bold', className:'btn-info'},
+                    {name:'italic', className:'btn-info'},
+                    {name:'strikethrough', className:'btn-info'},
+                    {name:'underline', className:'btn-info'},
+                    null,
+                    {name:'insertunorderedlist', className:'btn-success'},
+                    {name:'insertorderedlist', className:'btn-success'},
+                    {name:'outdent', className:'btn-purple'},
+                    {name:'indent', className:'btn-purple'},
+                    null,
+                    {name:'justifyleft', className:'btn-primary'},
+                    {name:'justifycenter', className:'btn-primary'},
+                    {name:'justifyright', className:'btn-primary'},
+                    {name:'justifyfull', className:'btn-inverse'},
+                    null,
+                    {name:'insertImage', className:'btn-success'},
+                    null,
+                    'foreColor',
+                    null,
+                    {name:'undo', className:'btn-grey'},
+                    {name:'redo', className:'btn-grey'}
+                ],
+            'wysiwyg': {
+                fileUploadError: showErrorAlert
+            }
+        }).prev().addClass('wysiwyg-style2');
+
+        $('#optionA_wysiwyg').ace_wysiwyg({
+            toolbar:
+                [
+                    'font',
+                    null,
+                    'fontSize',
+                    null,
+                    {name:'bold', className:'btn-info'},
+                    {name:'italic', className:'btn-info'},
+                    {name:'strikethrough', className:'btn-info'},
+                    {name:'underline', className:'btn-info'},
+                    null,
+                    {name:'insertunorderedlist', className:'btn-success'},
+                    {name:'insertorderedlist', className:'btn-success'},
+                    {name:'outdent', className:'btn-purple'},
+                    {name:'indent', className:'btn-purple'},
+                    null,
+                    {name:'justifyleft', className:'btn-primary'},
+                    {name:'justifycenter', className:'btn-primary'},
+                    {name:'justifyright', className:'btn-primary'},
+                    {name:'justifyfull', className:'btn-inverse'},
+                    null,
+                    {name:'insertImage', className:'btn-success'},
+                    null,
+                    'foreColor',
+                    null,
+                    {name:'undo', className:'btn-grey'},
+                    {name:'redo', className:'btn-grey'}
+                ],
+            'wysiwyg': {
+                fileUploadError: showErrorAlert
+            }
+        }).prev().addClass('wysiwyg-style2');
+
+        $('#optionB_wysiwyg').ace_wysiwyg({
+            toolbar:
+                [
+                    'font',
+                    null,
+                    'fontSize',
+                    null,
+                    {name:'bold', className:'btn-info'},
+                    {name:'italic', className:'btn-info'},
+                    {name:'strikethrough', className:'btn-info'},
+                    {name:'underline', className:'btn-info'},
+                    null,
+                    {name:'insertunorderedlist', className:'btn-success'},
+                    {name:'insertorderedlist', className:'btn-success'},
+                    {name:'outdent', className:'btn-purple'},
+                    {name:'indent', className:'btn-purple'},
+                    null,
+                    {name:'justifyleft', className:'btn-primary'},
+                    {name:'justifycenter', className:'btn-primary'},
+                    {name:'justifyright', className:'btn-primary'},
+                    {name:'justifyfull', className:'btn-inverse'},
+                    null,
+                    {name:'insertImage', className:'btn-success'},
+                    null,
+                    'foreColor',
+                    null,
+                    {name:'undo', className:'btn-grey'},
+                    {name:'redo', className:'btn-grey'}
+                ],
+            'wysiwyg': {
+                fileUploadError: showErrorAlert
+            }
+        }).prev().addClass('wysiwyg-style2');
+
+        $('#optionC_wysiwyg').ace_wysiwyg({
+            toolbar:
+                [
+                    'font',
+                    null,
+                    'fontSize',
+                    null,
+                    {name:'bold', className:'btn-info'},
+                    {name:'italic', className:'btn-info'},
+                    {name:'strikethrough', className:'btn-info'},
+                    {name:'underline', className:'btn-info'},
+                    null,
+                    {name:'insertunorderedlist', className:'btn-success'},
+                    {name:'insertorderedlist', className:'btn-success'},
+                    {name:'outdent', className:'btn-purple'},
+                    {name:'indent', className:'btn-purple'},
+                    null,
+                    {name:'justifyleft', className:'btn-primary'},
+                    {name:'justifycenter', className:'btn-primary'},
+                    {name:'justifyright', className:'btn-primary'},
+                    {name:'justifyfull', className:'btn-inverse'},
+                    null,
+                    {name:'insertImage', className:'btn-success'},
+                    null,
+                    'foreColor',
+                    null,
+                    {name:'undo', className:'btn-grey'},
+                    {name:'redo', className:'btn-grey'}
+                ],
+            'wysiwyg': {
+                fileUploadError: showErrorAlert
+            }
+        }).prev().addClass('wysiwyg-style2');
+
+        $('#optionD_wysiwyg').ace_wysiwyg({
+            toolbar:
+                [
+                    'font',
+                    null,
+                    'fontSize',
+                    null,
+                    {name:'bold', className:'btn-info'},
+                    {name:'italic', className:'btn-info'},
+                    {name:'strikethrough', className:'btn-info'},
+                    {name:'underline', className:'btn-info'},
+                    null,
+                    {name:'insertunorderedlist', className:'btn-success'},
+                    {name:'insertorderedlist', className:'btn-success'},
+                    {name:'outdent', className:'btn-purple'},
+                    {name:'indent', className:'btn-purple'},
+                    null,
+                    {name:'justifyleft', className:'btn-primary'},
+                    {name:'justifycenter', className:'btn-primary'},
+                    {name:'justifyright', className:'btn-primary'},
+                    {name:'justifyfull', className:'btn-inverse'},
+                    null,
+                    {name:'insertImage', className:'btn-success'},
+                    null,
+                    'foreColor',
+                    null,
+                    {name:'undo', className:'btn-grey'},
+                    {name:'redo', className:'btn-grey'}
+                ],
+            'wysiwyg': {
+                fileUploadError: showErrorAlert
+            }
+        }).prev().addClass('wysiwyg-style2');
+
+        /**
+         //make the editor have all the available height
+         $(window).on('resize.editor', function() {
+		var offset = $('#editor1').parent().offset();
+		var winHeight =  $(this).height();
+
+		$('#editor1').css({'height':winHeight - offset.top - 10, 'max-height': 'none'});
+	}).triggerHandler('resize.editor');
+         */
+
+        $('[data-toggle="buttons"] .btn').on('click', function(e){
+            var target = $(this).find('input[type=radio]');
+            var which = parseInt(target.val());
+            var toolbar = $('#editor1').prev().get(0);
+            if(which >= 1 && which <= 4) {
+                toolbar.className = toolbar.className.replace(/wysiwyg\-style(1|2)/g , '');
+                if(which == 1) $(toolbar).addClass('wysiwyg-style1');
+                else if(which == 2) $(toolbar).addClass('wysiwyg-style2');
+                if(which == 4) {
+                    $(toolbar).find('.btn-group > .btn').addClass('btn-white btn-round');
+                } else $(toolbar).find('.btn-group > .btn-white').removeClass('btn-white btn-round');
+            }
+        });
+
+        //RESIZE IMAGE
+
+        //Add Image Resize Functionality to Chrome and Safari
+        //webkit browsers don't have image resize functionality when content is editable
+        //so let's add something using jQuery UI resizable
+        //another option would be opening a dialog for user to enter dimensions.
+        if ( typeof jQuery.ui !== 'undefined' && ace.vars['webkit'] ) {
+
+            var lastResizableImg = null;
+            function destroyResizable() {
+                if(lastResizableImg == null) return;
+                lastResizableImg.resizable( "destroy" );
+                lastResizableImg.removeData('resizable');
+                lastResizableImg = null;
+            }
+
+            var enableImageResize = function() {
+                $('.wysiwyg-editor')
+                    .on('mousedown', function(e) {
+                        var target = $(e.target);
+                        if( e.target instanceof HTMLImageElement ) {
+                            if( !target.data('resizable') ) {
+                                target.resizable({
+                                    aspectRatio: e.target.width / e.target.height,
+                                });
+                                target.data('resizable', true);
+
+                                if( lastResizableImg != null ) {
+                                    //disable previous resizable image
+                                    lastResizableImg.resizable( "destroy" );
+                                    lastResizableImg.removeData('resizable');
+                                }
+                                lastResizableImg = target;
+                            }
+                        }
+                    })
+                    .on('click', function(e) {
+                        if( lastResizableImg != null && !(e.target instanceof HTMLImageElement) ) {
+                            destroyResizable();
+                        }
+                    })
+                    .on('keydown', function() {
+                        destroyResizable();
+                    });
+            }
+
+            enableImageResize();
+
+            /**
+             //or we can load the jQuery UI dynamically only if needed
+             if (typeof jQuery.ui !== 'undefined') enableImageResize();
+             else {//load jQuery UI if not loaded
+			//in Ace demo ./components will be replaced by correct components path
+			$.getScript("assets/js/jquery-ui.custom.min.js", function(data, textStatus, jqxhr) {
+				enableImageResize()
+			});
+		}
+             */
+        }
+    }
+
+    function clearWysiwyg() {
+        $('#question_content_wysiwyg').html("");
+        $('#optionA_wysiwyg').html("");
+        $('#optionB_wysiwyg').html("");
+        $('#optionC_wysiwyg').html("");
+        $('#optionD_wysiwyg').html("");
+    }
+    
+    function clearAnswer() {
+        //单选，多选
+        $("#option_answerA").attr("class","btn btn-sm");
+        $("#option_answerB").attr("class","btn btn-sm");
+        $("#option_answerC").attr("class","btn btn-sm");
+        $("#option_answerD").attr("class","btn btn-sm");
+        //判断
+        $("#false_answer").attr("class","btn btn-sm");
+        $("#true_answer").attr("class","btn btn-sm");
+        //填空
+        $("#fillinblank_input").val("");
+
+        //form内答案
+        $("#answer").val("");
+    }
+
+    function clearError() {
+        $("#addQuestionResult_span").empty();
+        $("#question_content_err").empty();
+        $("#optionA_err").empty();
+        $("#optionB_err").empty();
+        $("#optionC_err").empty();
+        $("#optionD_err").empty();
+        $("#option_answer_err").empty();
+        $("#trueorfalse_answer_err").empty();
+        $("#fillinblank_answer_err").empty();
+    }
+    
+    function clearPage() {
+        clearWysiwyg();
+        clearAnswer();
+        clearError();
+    }
+
+    function changeKind(kindId) {
+        $("#scroll_div").scrollTop(0);//回到顶部
+        clearPage();
+        if(kindId==1||kindId==2){//单选+多选
+            if(kindId==1){
+                $("#1").attr("class","btn btn-primary");
+                $("#2").attr("class","btn");
+                $("#3").attr("class","btn");
+                $("#4").attr("class","btn");
+                $("#5").attr("class","btn");
+            }
+            else if(kindId==2){
+                $("#1").attr("class","btn");
+                $("#2").attr("class","btn btn-primary");
+                $("#3").attr("class","btn");
+                $("#4").attr("class","btn");
+                $("#5").attr("class","btn");
+            }
+            $("#options").attr("class","show");
+            $("#trueorfalse_div").attr("class","hidden");
+            $("#fillinblank_div").attr("class","hidden");
+        }
+        else if(kindId==3){//判断
+            $("#1").attr("class","btn");
+            $("#2").attr("class","btn");
+            $("#3").attr("class","btn btn-primary");
+            $("#4").attr("class","btn");
+            $("#5").attr("class","btn");
+            $("#options").attr("class","hidden");
+            $("#trueorfalse_div").attr("class","show");
+            $("#fillinblank_div").attr("class","hidden");
+        }
+        else if(kindId==4){//填空
+            $("#1").attr("class","btn");
+            $("#2").attr("class","btn");
+            $("#3").attr("class","btn");
+            $("#4").attr("class","btn btn-primary");
+            $("#5").attr("class","btn");
+            $("#options").attr("class","hidden");
+            $("#trueorfalse_div").attr("class","hidden");
+            $("#fillinblank_div").attr("class","show");
+        }
+        else if(kindId==5){//简答
+            $("#1").attr("class","btn");
+            $("#2").attr("class","btn");
+            $("#3").attr("class","btn");
+            $("#4").attr("class","btn");
+            $("#5").attr("class","btn btn-primary");
+            $("#options").attr("class","hidden");
+            $("#trueorfalse_div").attr("class","hidden");
+            $("#fillinblank_div").attr("class","hidden");
+        }
+        $("#selected_kind").val(kindId);
+    }
+
+    function selectOption(answer,optionBtnId) {
+        var questionKind=$("#selected_kind").val();
+        if(questionKind==1)//单选题
+            selectOneOption(answer);
+
+        else if(questionKind==2)//多选题
+            selectMoreOption(answer,optionBtnId);
+    }
+
+    function selectOneOption(answer) {
+        answer=answer.toUpperCase();
+        if(answer=='A'){
+            $("#option_answerA").attr("class","btn btn-sm btn-primary");
+            $("#option_answerB").attr("class","btn btn-sm");
+            $("#option_answerC").attr("class","btn btn-sm");
+            $("#option_answerD").attr("class","btn btn-sm");
+        }
+        else if(answer=='B'){
+            $("#option_answerA").attr("class","btn btn-sm");
+            $("#option_answerB").attr("class","btn btn-sm btn-primary");
+            $("#option_answerC").attr("class","btn btn-sm");
+            $("#option_answerD").attr("class","btn btn-sm");
+        }
+        else if(answer=='C'){
+            $("#option_answerA").attr("class","btn btn-sm");
+            $("#option_answerB").attr("class","btn btn-sm");
+            $("#option_answerC").attr("class","btn btn-sm btn-primary");
+            $("#option_answerD").attr("class","btn btn-sm");
+        }
+        else if(answer=='D'){
+            $("#option_answerA").attr("class","btn btn-sm");
+            $("#option_answerB").attr("class","btn btn-sm");
+            $("#option_answerC").attr("class","btn btn-sm");
+            $("#option_answerD").attr("class","btn btn-sm btn-primary");
+        }
+        $("#answer").val(answer);
+    }
+
+    function selectMoreOption(answer,optionBtnId) {
+        var oldAnswer=$("#answer").val();
+        var newBtn='#'+optionBtnId;
+        answer=answer.toUpperCase();
+        var newAnswer="";
+        if(oldAnswer.indexOf(answer)>-1) {
+            newAnswer = oldAnswer.replace(answer, "");
+            $(newBtn).attr("class","btn btn-sm");
+        }
+        else {
+            newAnswer = oldAnswer + answer;
+            $(newBtn).attr("class","btn btn-sm btn-primary");
+        }
+        var sortNewAnswer=newAnswer.split('').sort().join('');
+        $("#answer").val(sortNewAnswer);
+    }
+
+    function selectTrueOrFalse(answer) {
+        answer=answer.toUpperCase();
+        if(answer=='T'){
+            $("#true_answer").attr("class","btn btn-sm btn-primary");
+            $("#false_answer").attr("class","btn btn-sm");
+        }
+        else if(answer=='F'){
+            $("#true_answer").attr("class","btn btn-sm");
+            $("#false_answer").attr("class","btn btn-sm btn-primary");
+        }
+        $("#answer").val(answer);
+    }
+
+    function checkQuestionContent() {
+        var questionContent=$("#question_content_wysiwyg").html();
+        if(questionContent.length<=0){
+            $("#question_content_err").html("<font color='red'>" + ">>不能为空" + "</font>");
+            return false;
+        }
+        else if(questionContent.length>200) {
+            $("#question_content_err").html("<font color='red'>" + ">>内容过长不能超过200个字符" + "</font>");
+            return false;
+        }
+        else {
+            $("#question_content_err").empty();
+            $("#questioncontent").val(questionContent);
+            return true;
+        }
+    }
+
+    function checkOptionA() {
+        var optionA=$("#optionA_wysiwyg").html();
+        if(optionA.length<=0){
+            $("#optionA_err").html("<font color='red'>" + ">>不能为空" + "</font>");
+            return false;
+        }
+        else if(optionA.length>200) {
+            $("#optionA_err").html("<font color='red'>" + ">>内容过长不能超过200个字符" + "</font>");
+            return false;
+        }
+        else {
+            $("#optionA_err").empty();
+            $("#optionacontent").val(optionA);
+            return true;
+        }
+    }
+
+    function checkOptionB() {
+        var optionB=$("#optionB_wysiwyg").html();
+        if(optionB.length<=0){
+            $("#optionB_err").html("<font color='red'>" + ">>不能为空" + "</font>");
+            return false;
+        }
+        else if(optionB.length>200) {
+            $("#optionB_err").html("<font color='red'>" + ">>内容过长不能超过200个字符" + "</font>");
+            return false;
+        }
+        else {
+            $("#optionB_err").empty();
+            $("#optionbcontent").val(optionB);
+            return true;
+        }
+    }
+
+    function checkOptionC() {
+        var optionC=$("#optionC_wysiwyg").html();
+        if(optionC.length<=0){
+            $("#optionC_err").html("<font color='red'>" + ">>不能为空" + "</font>");
+            return false;
+        }
+        else if(optionC.length>200) {
+            $("#optionC_err").html("<font color='red'>" + ">>内容过长不能超过200个字符" + "</font>");
+            return false;
+        }
+        else {
+            $("#optionC_err").empty();
+            $("#optionccontent").val(optionC);
+            return true;
+        }
+    }
+
+    function checkOptionD() {
+        var optionD=$("#optionD_wysiwyg").html();
+        if(optionD.length<=0){
+            $("#optionD_err").html("<font color='red'>" + ">>不能为空" + "</font>");
+            return false;
+        }
+        else if(optionD.length>200) {
+            $("#optionD_err").html("<font color='red'>" + ">>内容过长不能超过200个字符" + "</font>");
+            return false;
+        }
+        else {
+            $("#optionD_err").empty();
+            $("#optiondcontent").val(optionD);
+            return true;
+        }
+    }
+    
+    function checkAnswer() {
+        var kindId=$("#selected_kind").val();
+        if(kindId==1||kindId==2){//单选，多选
+            if($("#answer").val()==""){
+                $("#option_answer_err").html("<font color='red'>" + ">>请选择答案" + "</font>");
+                return false;
+            }
+            else {
+                $("#option_answer_err").empty();
+                return true;
+            }
+        }
+        else if (kindId==3) {//判断
+            if($("#answer").val()==""){
+                $("#trueorfalse_answer_err").html("<font color='red'>" + ">>请选择答案" + "</font>");
+                return false;
+            }
+            else {
+                $("#trueorfalse_answer_err").empty();
+                return true;
+            }
+        }
+        else if (kindId==4) {//填空
+            var fillinblankAnswer=$("#fillinblank_input").val();
+            if(fillinblankAnswer==""){
+                $("#fillinblank_answer_err").html("<font color='red'>" + ">>不能为空" + "</font>");
+                return false;
+            }
+            else if (fillinblankAnswer.length>200) {
+                $("#fillinblank_answer_err").html("<font color='red'>" + ">>内容过长不能超过200个字符" + "</font>");
+                return false;
+            }
+            else {
+                $("#fillinblank_answer_err").empty();
+                $("#answer").val($("#fillinblank_input").val());
+                return true;
+            }
+        }
+    }
+    
+    function checkSubmit() {
+        var checkQuestionContentResult=false;
+        var checkOptionAResult=false;
+        var checkOptionBResult=false;
+        var checkOptionCResult=false;
+        var checkOptionDResult=false;
+        var checkAnswerResult=false;
+
+        var kindId=$("#selected_kind").val();
+        
+        if(kindId==1||kindId==2){//单选，多选
+            checkQuestionContentResult=checkQuestionContent();
+            checkOptionAResult=checkOptionA();
+            checkOptionBResult=checkOptionB();
+            checkOptionCResult=checkOptionC();
+            checkOptionDResult=checkOptionD();
+            checkAnswerResult=checkAnswer();
+            if(checkQuestionContentResult&&checkOptionAResult&&checkOptionBResult
+                &&checkOptionCResult&&checkOptionDResult&&checkAnswerResult)
+                $("#add_question_btn").attr("type","submit");
+            else
+                $("#add_question_btn").attr("type","button");
+        }
+        else if (kindId==3||kindId==4) {//判断,填空
+            checkQuestionContentResult=checkQuestionContent();
+            checkAnswerResult=checkAnswer();
+            if(checkQuestionContentResult&&checkAnswerResult)
+                $("#add_question_btn").attr("type","submit");
+            else
+                $("#add_question_btn").attr("type","button");
+        }
+        else if (kindId==5) {//简答
+            checkQuestionContentResult=checkQuestionContent();
+            if(checkQuestionContentResult)
+                $("#add_question_btn").attr("type","submit");
+            else
+                $("#add_question_btn").attr("type","button");
+        }
+
+    }
+
+</script>
+</body>
+</html>

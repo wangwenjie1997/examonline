@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional
@@ -27,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User regist(User user) {
-        user.setPicpath(Constants.PIC_PATH);
+        user.setPicPath(Constants.PIC_PATH);
         if(userMapper.insertUser(user)>0) {
             return checkMail(user.getMail());
         }
@@ -65,8 +67,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean editPicPath(String picpath,int userid) {
+        if(userMapper.updatePicaPath(picpath,userid)>0)
+            return true;
+        else
+            return false;
+    }
+
+    @Override
     public void sendMail(String sender, String receiver, String title, String text) {
         sendQQMailUtil.send(sender,receiver,title,text);
     }
+
+    @Override
+    public User getUser(String mail, String password) {
+        return userMapper.selectUserByMailAndPassword(mail,password);
+    }
+
 
 }

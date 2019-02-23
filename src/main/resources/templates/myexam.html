@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>我的考试</title>
+
+    <meta name="description" content="overview &amp; stats" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="no-skin">
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <div class="navbar-container ace-save-state" id="navbar-container">
+
+        <div class="navbar-header pull-left">
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+            <small class="navbar-brand">
+                <i class="fa fa-leaf"></i>
+                在线考试系统
+            </small>
+
+        </div>
+
+        <div class="navbar-buttons navbar-header pull-right" role="navigation">
+            <ul class="nav ace-nav">
+                <li class="light-blue dropdown-modal">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" height="40" width="40"
+                             th:src="${session.user.getPicPath()!=null}? (${session.user.getPicPath()}) : 'assets/images/myimages/user.jpg'"
+                             alt="头像"/>
+                        <span class="user-info">
+                                <small>欢迎登录</small>
+                                <span th:text="${session.user.getName()}" th:if="${session.user!=null}"></span>
+                        </span>
+
+                        <i class="ace-icon fa fa-caret-down"></i>
+                    </a>
+
+                    <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li>
+                            <a href="logout">
+                                <i class="ace-icon fa fa-power-off"></i>
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /.navbar-container -->
+</div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
+
+    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+        <script type="text/javascript">
+            try{ace.settings.loadState('sidebar')}catch(e){}
+        </script>
+
+        <ul class="nav nav-list">
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=index)}">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> 首页 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=questionbank)}">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> 题库管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=papergroup)}">
+                    <i class="menu-icon fa fa-picture-o"></i>
+                    <span class="menu-text"> 试卷管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=markexam)}">
+                    <i class="menu-icon fa fa-pencil-square-o"></i>
+                    <span class="menu-text"> 试卷批阅 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="active">
+                <a href="#" th:href="@{/gotopage(pagename=myexam)}">
+                    <i class="menu-icon fa fa-file-o"></i>
+                    <span class="menu-text"> 我的考试 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-tag"></i>
+                    <span class="menu-text"> 帐号管理 </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <b class="arrow"></b>
+
+                <ul class="submenu">
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editphoto)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改头像
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editname)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改姓名
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editmail)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改邮箱
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editpassword)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改密码
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                </ul>
+            </li>
+
+        </ul><!-- /.nav-list -->
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>
+                        我的考试
+                    </h1>
+                </div><!-- /.page-header -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div>
+                            <div id="dynamic-table_wrapper" class="dataTables_wrapper form-inline no-footer">
+                                <div class="row">
+                                    <div class="col-xs-6">
+
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <div id="dynamic-table_filter" class="dataTables_filter">
+                                            <label>
+                                                <input type="hidden" id="hidden_exam_content">
+                                                <input type="search" id="search_exam_content" class="form-control input-sm" placeholder="搜索考试" aria-controls="dynamic-table">
+
+                                                <button type="button" id="search_exam_btn" class="btn btn-mini no-border btn-info2" onclick="searchExam()">
+                                                    <i class="ace-icon fa fa-search icon-only bigger-110"></i>
+                                                </button>
+                                                <button type="button" id="search_exam_return_btn" class="btn btn-mini no-border btn-info2 hide" onclick="searchExamReturn()">
+                                                    <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                                                </button>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table id="dynamic-table" class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
+                                    <thead>
+                                    <tr>
+                                        <th>试卷名称</th>
+                                        <th>开始时间</th>
+                                        <th>结束时间</th>
+                                        <th>试卷信息</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody id="exan_tbody">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="message-footer clearfix">
+                    <div class="pull-left" id="all_exam_num"></div>
+
+                    <div class="pull-right">
+                        <div class="inline middle" >
+                            共<span id="exam_page_all_num"></span>页
+                        </div>
+
+                        &nbsp; &nbsp;
+                        <ul class="pagination middle">
+                            <li>
+                                <a href="#" onclick="gotoFirstPage()">
+                                    <i class="ace-icon fa fa-step-backward middle"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="gotoPrePage()">
+                                    <i class="ace-icon fa fa-caret-left bigger-140 middle"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <span>
+                                    <input type="hidden" id="hidden_exam_pageNum">
+                                    <input maxlength="3" type="text" id="exam_pageNum" onblur="changePage()" value="1">
+                                </span>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="gotoNextPage()">
+                                    <i class="ace-icon fa fa-caret-right bigger-140 middle"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="gotoLastPage()">
+                                    <i class="ace-icon fa fa-step-forward middle"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div><!-- /.page-content -->
+        </div>
+
+
+        </div><!-- /.main-content -->
+
+        <div class="footer">
+            <div class="footer-inner">
+                <div class="footer-content">
+						<span class="bigger-120">
+							<span class="blue bolder">在线考试系统</span>
+							王文杰 &copy; 2018
+						</span>
+                </div>
+            </div>
+        </div>
+
+    <!-- 错误弹窗 -->
+    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        错误信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <span id="span_error"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 试卷信息弹窗 -->
+    <div class="modal fade" id="exam_info_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        试卷信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="paperGrade">试卷总分</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="paperGrade" placeholder="" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="paperQuestionNum">试卷题数</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="paperQuestionNum" placeholder="" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="paperCreateName">发布者</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="paperCreateName" placeholder="" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="paperCreateMail">发布者邮箱</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="paperCreateMail" placeholder="" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 试卷成绩弹窗 -->
+    <div class="modal fade" id="exam_grade_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        试卷信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="examGrade">成绩</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="examGrade" placeholder="" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+</div><!-- /.main-container -->
+
+    <!-- basic scripts -->
+    <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+    <!--[if !IE]> -->
+    <script src="assets/js/jquery-2.1.4.min.js"></script>
+
+    <!-- <![endif]-->
+
+    <!--[if IE]>
+    <script src="assets/js/jquery-1.11.3.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+    </script>
+    <script src="assets/js/bootstrap.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+
+    <!-- ace scripts -->
+    <script src="assets/js/ace-elements.min.js"></script>
+    <script src="assets/js/ace.min.js"></script>
+
+    <!-- inline scripts related to this page -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            getPageExam();
+        });
+        
+        function clearSearch() {
+            $("#search_exam_content").val("");
+            $("#hidden_exam_content").val("");
+            $("#search_exam_btn").removeClass("hide");
+            $("#search_exam_return_btn").addClass("hide");
+        }
+
+        function searchExam() {
+            var search=$("#search_exam_content").val();
+            if(search!=""){
+                $("#hidden_exam_content").val(search);
+                $("#search_exam_return_btn").removeClass("hide");
+                getPageExam();
+            }
+        }
+
+        function searchExamReturn() {
+            clearSearch();
+            getPageExam();
+        }
+
+        function stringToDate(str){
+            var tempStrs = str.split(" ");
+            var dateStrs = tempStrs[0].split("-");
+            var year = parseInt(dateStrs[0], 10);
+            var month = parseInt(dateStrs[1], 10) - 1;
+            var day = parseInt(dateStrs[2], 10);
+            var timeStrs = tempStrs[1].split(":");
+            var hour = parseInt(timeStrs [0], 10);
+            var minute = parseInt(timeStrs[1], 10);
+            var second = parseInt(timeStrs[2], 10);
+            var date = new Date(year, month, day, hour, minute, second);
+            return date;
+        }
+        
+        function getPageExam() {
+            var search=$("#search_exam_content").val();
+            var pageNum=$("#exam_pageNum").val();
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/getmyexam",
+                dataType: 'json',
+                data: {"pageNum":pageNum,"onePageNum":10,"search":search},
+                success: function(data){
+                    $("#all_exam_num").html("共有"+data.all_exam_num+"条记录");
+                    $("#exam_page_all_num").html(data.exam_page_all_num);
+                    $("#exam_pageNum").val(data.exam_pageNum);
+                    $("#hidden_exam_pageNum").val(data.exam_pageNum);
+                    <!--加载考试-->
+                    var str="";
+
+                    if(data.one_page_exam!="{}"){
+                        for(var k in data.one_page_exam){
+                            var startDate = stringToDate(data.one_page_exam[k].papeInfo.paperStart);
+                            var endDate = stringToDate(data.one_page_exam[k].papeInfo.paperEnd);
+                            var dateNow = new Date(Date.now());
+                            if(dateNow.getTime()<startDate.getTime()){
+                                str+="<tr role='row' class='odd'>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperName+"</td>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperStart+"</td>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperEnd+"</td>" +
+                                    "<td><a href='#' onclick='showExamInfo("+data.one_page_exam[k].papeInfo.paperId+")'>试卷信息</a></td>"+
+                                    "<td>未开始</td>" +
+                                    "<td>" +
+
+                                    "</td>" +
+                                    "</tr>";
+                            }
+                            else if (dateNow.getTime()>endDate.getTime()){
+                                str+="<tr role='row' class='odd'>" +
+                                    "<td><a target='_blank' href='gotomarkpaperpage?paperId="+data.one_page_exam[k].papeInfo.paperId+"&userId="+[[${session.user.getUserId()}]]+"&type=stu_show&pagename=markpaper'>"+data.one_page_exam[k].papeInfo.paperName+"</a></td>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperStart+"</td>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperEnd+"</td>" +
+                                    "<td><a href='#' onclick='showExamInfo("+data.one_page_exam[k].papeInfo.paperId+")'>试卷信息</a></td>"+
+                                    "<td>已结束</td>" +
+                                    "<td>" +
+                                    "<a href='#' onclick='showGrade("+data.one_page_exam[k].papeInfo.paperId+")'>查看成绩</a>"
+                                "</td>" +
+                                "</tr>";
+                            }
+                            else {
+                                str+="<tr role='row' class='odd'>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperName+"</td>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperStart+"</td>" +
+                                    "<td>"+data.one_page_exam[k].papeInfo.paperEnd+"</td>" +
+                                    "<td><a href='#' onclick='showExamInfo("+data.one_page_exam[k].papeInfo.paperId+")'>试卷信息</a></td>"+
+                                    "<td>考试中</td>" +
+                                    "<td>" +
+                                    "<a target='_blank' href='gotoexampaperpage?paperId="+data.one_page_exam[k].papeInfo.paperId+"'>参加考试</a>"
+                                "</td>" +
+                                "</tr>";
+                            }
+                        }
+                    }
+                    $("#exan_tbody").html(str);
+                    <!--加载题目-->
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+
+        <!--手动换页-->
+        function changePage() {
+            var newPageNum=$("#exam_pageNum").val();
+            var oldPageNum=$("#hidden_exam_pageNum").val();
+            var maxPageNum=$("#exam_page_all_num").html();
+            if(!isNaN(newPageNum)){//是数字
+                if(Number(newPageNum)>Number(maxPageNum)||Number(newPageNum)<1)
+                    $("#exam_pageNum").val(oldPageNum);
+                else {
+                    $("#exam_pageNum").val(newPageNum);
+                    $("#hidden_exam_pageNum").val(newPageNum);
+                    getPageExam();
+                }
+            }
+            else if(isNaN(newPageNum)) {//非数字
+                $("#exam_pageNum").val(oldPageNum);
+            }
+        }
+
+        <!--到第一页-->
+        function gotoFirstPage() {
+            if($("#exam_pageNum").val()>1) {
+                $("#exam_pageNum").val('1');
+                getPageExam();
+            }
+        }
+
+        <!--上一页-->
+        function gotoPrePage() {
+            var oldPageNum=$("#hidden_exam_pageNum").val();
+            var newPageNum=Number(oldPageNum)-1;
+            if(Number(oldPageNum)>1) {
+                $("#exam_pageNum").val(newPageNum);
+                getPageExam();
+            }
+        }
+
+        <!--下一页-->
+        function gotoNextPage() {
+            var oldPageNum=$("#hidden_exam_pageNum").val();
+            var maxPageNum=$("#exam_page_all_num").html();
+            var newPageNum=Number(oldPageNum)+1;
+            if(Number(oldPageNum)+1<=Number(maxPageNum)) {
+                $("#exam_pageNum").val(newPageNum);
+                getPageExam();
+            }
+        }
+
+        <!--到末页-->
+        function gotoLastPage() {
+            var maxPageNum=$("#exam_page_all_num").html();
+            if($("#exam_pageNum").val()<Number(maxPageNum)) {
+                $("#exam_pageNum").val(maxPageNum);
+                getPageExam();
+            }
+        }
+
+        <!--试卷信息弹窗-->
+        function showExamInfo(paperId) {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/getexampaperinfo",
+                dataType: 'json',
+                data: {"paperId":paperId},
+                success: function(data){
+                    $("#paperGrade").val(data.paperGrade);
+                    $("#paperQuestionNum").val(data.paperQuestionNum);
+                    $("#paperCreateName").val(data.paperCreateName);
+                    $("#paperCreateMail").val(data.paperCreateMail);
+                    $('#exam_info_modal').modal('show');
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+
+        <!--错误弹窗-->
+        function showError(err_msg) {
+            if($("#span_error").html(err_msg)){
+                $('#error').modal('show');
+            }
+        }
+
+        <!--考试成绩弹窗-->
+        function showGrade(paperId) {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/getexamgrade",
+                dataType: 'json',
+                data: {"paperId":paperId},
+                success: function(data){
+                    console.log(data);
+                   $("#examGrade").val(data.examGrade);
+                    $("#exam_grade_modal").modal('show');
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+
+        }
+
+    </script>
+
+</body>
+</html>

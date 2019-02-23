@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>添加试卷</title>
+
+    <meta name="description" content="responsive photo gallery using colorbox" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+    <link rel="stylesheet" href="assets/css/colorbox.min.css" />
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="no-skin">
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <div class="navbar-container ace-save-state" id="navbar-container">
+        <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+            <span class="sr-only">Toggle sidebar</span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+        </button>
+        <div class="navbar-header pull-left">
+            <small class="navbar-brand">
+                <i class="fa fa-leaf"></i>
+                在线考试系统
+            </small>
+        </div>
+
+        <div class="navbar-buttons navbar-header pull-right" role="navigation">
+            <ul class="nav ace-nav">
+                <li class="light-blue dropdown-modal">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" height="40" width="40"
+                             th:src="${session.user.getPicPath()!=null}? (${session.user.getPicPath()}) : 'assets/images/myimages/user.jpg'"
+                             alt="头像"/>
+                        <span class="user-info">
+                                <small>欢迎登录</small>
+                                <span th:text="${session.user.getName()}" th:if="${session.user!=null}"></span>
+                        </span>
+
+                        <i class="ace-icon fa fa-caret-down"></i>
+                    </a>
+
+                    <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li>
+                            <a href="logout">
+                                <i class="ace-icon fa fa-power-off"></i>
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /.navbar-container -->
+</div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
+
+    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+        <script type="text/javascript">
+            try{ace.settings.loadState('sidebar')}catch(e){}
+        </script>
+
+        <ul class="nav nav-list">
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=index)}">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> 首页 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=questionbank)}">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> 题库管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="active">
+                <a href="#" th:href="@{/gotopage(pagename=papergroup)}">
+                    <i class="menu-icon fa fa-picture-o"></i>
+                    <span class="menu-text"> 试卷管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=markexam)}">
+                    <i class="menu-icon fa fa-pencil-square-o"></i>
+                    <span class="menu-text"> 试卷批阅 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=myexam)}">
+                    <i class="menu-icon fa fa-file-o"></i>
+                    <span class="menu-text"> 我的考试 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-tag"></i>
+                    <span class="menu-text"> 帐号管理 </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <b class="arrow"></b>
+
+                <ul class="submenu">
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editphoto)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改头像
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editname)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改姓名
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editmail)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改邮箱
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editpassword)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改密码
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                </ul>
+            </li>
+
+        </ul><!-- /.nav-list -->
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-content">
+            <div class="page-header">
+                <h1>添加试卷
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        <span th:text="${session.selected_group.getPaperGroupName()}"></span>
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="widget-box">
+                        <div class="widget-header widget-header-blue widget-header-flat">
+                            <h4 class="widget-title lighter" id="add_paper_err">
+
+                            </h4>
+                        </div>
+
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div id="fuelux-wizard-container" class="no-steps-container">
+                                    <div>
+                                        <ul class="steps" style="margin-left: 0">
+                                            <li data-step="1" class="active" id="step_one">
+                                                <span class="step">1</span>
+                                                <span class="title">创建试卷</span>
+                                            </li>
+
+                                            <li data-step="2" id="step_two">
+                                                <span class="step">2</span>
+                                                <span class="title">试卷设置</span>
+                                            </li>
+
+                                            <li data-step="3" id="step_three">
+                                                <span class="step">3</span>
+                                                <span class="title">添加题目</span>
+                                            </li>
+
+                                            <li data-step="4" id="step_four">
+                                                <span class="step">4</span>
+                                                <span class="title">添加学生</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <hr>
+                                    <div class="form-horizontal step-content pos-rel">
+                                        <input type="hidden" id="paperId">
+                                        <div id="step_one_div">
+                                            <div class="form-group">
+                                                <label for="paperName"
+                                                       class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">试卷名:</label>
+                                                <div class="col-xs-12 col-sm-5">
+                                            <span class="block input-icon input-icon-right">
+                                                <input type="text" name="paperName" id="paperName" class="width-100"
+                                                onblur="paperNameBlur()">
+                                            </span>
+                                                </div>
+                                                <div class="help-block col-xs-12 col-sm-reset inline">
+                                                    <span id="paperName_err"></span>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="wizard-actions">
+                                                <button class="btn btn-success btn-next" data-last="Finish"
+                                                        id="step_one_btn" type="button" onclick="paperNameSubmit()">确定</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="hide" id="step_two_div">
+                                            <input type="hidden" id="settingPaperName">
+                                            <div>
+                                                <h3 class="lighter block green">分数设置(最小分数单位0.5)</h3>
+
+                                                <div class="form-group">
+                                                    <label for="oneOptionMark"
+                                                           class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">单选题每题分数:</label>
+                                                    <div class="col-xs-12 col-sm-5">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="text" name="oneOptionMark" id="oneOptionMark"
+                                                                   class="width-100" onblur="oneOptionMarkBlur()">
+                                                        </span>
+                                                    </div>
+                                                    <div class="help-block col-xs-12 col-sm-reset inline">
+                                                        <span id="oneOptionMark_err"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="moreOptionMark"
+                                                           class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">多选题每题分数:</label>
+                                                    <div class="col-xs-12 col-sm-5">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="text" name="moreOptionMark" id="moreOptionMark"
+                                                                   class="width-100" onblur="moreOptionMarkBlur()">
+                                                        </span>
+                                                    </div>
+                                                    <div class="help-block col-xs-12 col-sm-reset inline">
+                                                        <span id="moreOptionMark_err"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="trueOrFalseMark"
+                                                           class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">判断题每题分数:</label>
+                                                    <div class="col-xs-12 col-sm-5">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="text" name="trueOrFalseMark" id="trueOrFalseMark"
+                                                                   class="width-100" onblur="trueOrFalseMarkBlur()">
+                                                        </span>
+                                                    </div>
+                                                    <div class="help-block col-xs-12 col-sm-reset inline">
+                                                        <span id="trueOrFalseMark_err"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="fillInBlankMark"
+                                                           class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">填空题每空分数:</label>
+                                                    <div class="col-xs-12 col-sm-5">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="text" name="fillInBlankMark" id="fillInBlankMark"
+                                                                   class="width-100" onblur="fillInBlankMarkBlur()">
+                                                        </span>
+                                                    </div>
+                                                    <div class="help-block col-xs-12 col-sm-reset inline">
+                                                        <span id="fillInBlankMark_err"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="shortAnswerQuestionMark"
+                                                           class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">简答题每题分数:</label>
+                                                    <div class="col-xs-12 col-sm-5">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="text" name="shortAnswerQuestionMark" id="shortAnswerQuestionMark"
+                                                                   class="width-100" onblur="shortAnswerQuestionMarkBlur()">
+                                                        </span>
+                                                    </div>
+                                                    <div class="help-block col-xs-12 col-sm-reset inline">
+                                                        <span id="shortAnswerQuestionMark_err"></span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div>
+                                                <h3 class="lighter block green">自动批改设置</h3>
+                                                <div class="form-group">
+                                                    <label class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right"></label>
+                                                    <div class="col-xs-12 col-sm-9">
+                                                        <span class="block input-icon input-icon-right">
+                                                            <input type="checkbox" name="oneOptionCheck" id="oneOptionCheck">
+                                                            <label for="oneOptionCheck">单选题</label>
+
+                                                            <input type="checkbox" name="moreOptionCheck" id="moreOptionCheck">
+                                                            <label for="moreOptionCheck">多选题</label>
+
+                                                            <input type="checkbox" name="trueOrFalseCheck" id="trueOrFalseCheck">
+                                                            <label for="trueOrFalseCheck">判断题</label>
+
+                                                            <input type="checkbox" name="fillInBlankCheck" id="fillInBlankCheck">
+                                                            <label for="fillInBlankCheck">填空题</label>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <hr>
+                                            <div class="wizard-actions">
+                                                <button class="btn btn-success btn-next" data-last="Finish"
+                                                        id="step_two_btn" type="button" onclick="paperSettingSubmit()">确定</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="hide" id="step_three_div">
+                                            <div class="form-group">
+                                                <div class="col-xs-12 col-sm-4">
+                                                    <div id="all_bank">
+                                                        <label for="bank">题库:</label>
+                                                        <select class="input-medium" id="bank" name="bank">
+                                                            <option id="all_bank_option" value="0">所有题库</option>
+                                                            <option th:value=${bank.getBankId()} th:text=${bank.getBankName()} th:each="bank:${all_bank}"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-4">
+                                                    <div id="all_kind">
+                                                        <label for="kind">题型:</label>
+                                                        <select class="input-medium" id="kind" name="kind">
+                                                            <option id="all_kind_option" value="0">所有题型</option>
+                                                            <option th:value=${kind.getKindId()} th:text=${kind.getKindName()} th:each="kind:${all_kind}"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-4">
+                                                    <input type="hidden" id="hidden_search_question_content">
+                                                    <input type="search" id="search_question_content" class="input-sm" placeholder="搜索题目" aria-controls="dynamic-table" value="">
+                                                    <button type="button" id="search_question_btn" class="btn btn-mini no-border btn-info2" onclick="searchQuestion()">
+                                                        <i class="ace-icon fa fa-search icon-only bigger-110"></i>
+                                                    </button>
+                                                    <button type="button" id="search_question_return_btn" class="btn btn-mini no-border btn-info2 hide" onclick="searchQuestionReturn()">
+                                                        <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <table id="dynamic-table" class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>题目内容</th>
+                                                            <th>题型</th>
+                                                            <th id="change_tr">题库</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="question_tbody">
+                                                    </tbody>
+                                                </table>
+                                                <div class="message-footer clearfix">
+                                                    <div class="pull-left" id="all_question_num"></div>
+
+                                                    <div class="pull-right">
+                                                        <div class="inline middle">
+                                                            共<span id="question_page_all_num"></span>页
+                                                        </div>
+
+                                                        &nbsp; &nbsp;
+                                                        <ul class="pagination middle">
+                                                            <li>
+                                                                <a href="#" onclick="gotoFirstPage()">
+                                                                    <i class="ace-icon fa fa-step-backward middle"></i>
+                                                                </a>
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="#" onclick="gotoPrePage()">
+                                                                    <i class="ace-icon fa fa-caret-left bigger-140 middle"></i>
+                                                                </a>
+                                                            </li>
+
+                                                            <li>
+                                                                <span>
+                                                                    <input type="hidden" id="hidden_question_pageNum">
+                                                                    <input maxlength="3" type="text" id="question_pageNum" onblur="changePage()" value="1">
+                                                                </span>
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="#" onclick="gotoNextPage()">
+                                                                    <i class="ace-icon fa fa-caret-right bigger-140 middle"></i>
+                                                                </a>
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="#" onclick="gotoLastPage()">
+                                                                    <i class="ace-icon fa fa-step-forward middle"></i>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="wizard-actions">
+                                                <input type="hidden" id="show_mode" value="bank">
+                                                <button class="btn btn-success btn-next hide" data-last="Finish"
+                                                        id="show_bank_question_btn" type="button" onclick="getBankQuestion()">添加题目</button>
+                                                <button class="btn btn-success btn-next" data-last="Finish"
+                                                        id="show_paper_content_btn" type="button" onclick="getPaperContent()">查看试卷</button>
+                                                <button class="btn btn-success btn-next" data-last="Finish"
+                                                        id="step_three_btn" type="button" onclick="addPaperSubmit()">确定</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="hide" id="step_four_div">
+                                            <div id="add_examuser">
+                                                <div>
+                                                    <h3 class="lighter block green">逐个添加
+                                                        <span id="add_one_examuser_err"></span>
+                                                    </h3>
+                                                    <button class="btn btn-sm btn-warning" onclick="checkAddOneExamUser()">
+                                                        <span class="bigger-110 no-text-shadow">逐个添加</span>
+                                                    </button>
+                                                </div>
+                                                <div>
+                                                    <h3 class="lighter block green">Excel导入
+                                                        <a href="#" th:href="@{/downloadexamusermould}">模板下载</a>
+                                                        <span id="add_excel_examuser_err"></span>
+                                                    </h3>
+                                                    <input name="fileName" id="filename" type="file" style="display:none"
+                                                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+                                                       , application/vnd.ms-excel" />
+                                                    <div class="input-append">
+                                                        <input id="excelCover" class="input-large" type="text"/>
+                                                        <a class="btn btn-white btn-success" onclick="$('input[id=filename]').click();">选择文件</a>
+
+                                                        <button class="btn btn-sm btn-warning" onclick="addExcelExamUserSubmit()">
+                                                            <span class="bigger-110 no-text-shadow">导入</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="hide" id="show_examuser">
+                                                <div class="pull-right">
+                                                    <input type="hidden" id="hidden_search_examuser_content">
+                                                    <input type="search" id="search_examuser_content" class="input-sm" placeholder="搜索考生" aria-controls="dynamic-table" value="">
+                                                    <button type="button" id="search_examuser_btn" class="btn btn-mini no-border btn-info2" onclick="searchExamUser()">
+                                                        <i class="ace-icon fa fa-search icon-only bigger-110"></i>
+                                                    </button>
+                                                    <button type="button" id="search_examuser_return_btn" class="btn btn-mini no-border btn-info2 hide" onclick="searchExamUserReturn()">
+                                                        <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                                                    </button>
+                                                </div>
+                                                <br/><br/>
+                                                <div>
+                                                    <table class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>邮箱</th>
+                                                            <th>姓名</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="examuser_tbody">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <div class="message-footer clearfix">
+                                                    <div class="pull-left" id="all_examuser_num"></div>
+
+                                                    <div class="pull-right">
+                                                        <div class="inline middle">
+                                                            共<span id="examuser_page_all_num"></span>页
+                                                        </div>
+
+                                                        &nbsp; &nbsp;
+                                                        <ul class="pagination middle">
+                                                            <li>
+                                                                <a href="#" onclick="gotoExamUserFirstPage()">
+                                                                    <i class="ace-icon fa fa-step-backward middle"></i>
+                                                                </a>
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="#" onclick="gotoExamUserPrePage()">
+                                                                    <i class="ace-icon fa fa-caret-left bigger-140 middle"></i>
+                                                                </a>
+                                                            </li>
+
+                                                            <li>
+                                                                <span>
+                                                                    <input type="hidden" id="hidden_examuser_pageNum">
+                                                                    <input maxlength="3" type="text" id="examuser_pageNum" onblur="changeExamUserPage()" value="1">
+                                                                </span>
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="#" onclick="gotoExamUserNextPage()">
+                                                                    <i class="ace-icon fa fa-caret-right bigger-140 middle"></i>
+                                                                </a>
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="#" onclick="gotoExamUserLastPage()">
+                                                                    <i class="ace-icon fa fa-step-forward middle"></i>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="wizard-actions">
+                                                <form class="form-horizontal" id="sample-form" method="post" action="#" th:action="@{/gotopage(pagename=papergroup)}">
+                                                    <button class="btn btn-success btn-next" data-last="Finish"
+                                                            id="show_examuser_btn" type="button" onclick="showEditExamUser()">查看考生</button>
+                                                    <button class="btn btn-success btn-next hide" data-last="Finish"
+                                                            id="show_add_examuser_btn" type="button" onclick="showAddExamUser()">添加考生</button>
+
+                                                    <button class="btn btn-success btn-next" data-last="Finish"
+                                                            id="step_four_btn" type="submit" >确定</button>
+
+
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div><!-- /.widget-main -->
+                        </div><!-- /.widget-body -->
+                    </div>
+
+                    <!-- PAGE CONTENT ENDS -->
+
+                </div>
+                    <!-- PAGE CONTENT ENDS -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.page-content -->
+    </div><!-- /.main-content -->
+
+    <div class="footer">
+        <div class="footer-inner">
+            <div class="footer-content">
+						<span class="bigger-120">
+							<span class="blue bolder">在线考试系统</span>
+							王文杰 &copy; 2018
+						</span>
+            </div>
+        </div>
+    </div>
+
+<!-- 逐个添加考考生 -->
+<div class="modal fade" id="add_one_examuser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    逐个添加考生(未注册考生需要填写姓名)
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <label for="add_examuser_mail">考生邮箱:</label>
+                    <input type="text" name="add_examuser_mail" id="add_examuser_mail" onblur="examUserMailBlur()"/>
+                    <span id="add_examuser_mail_err"></span>
+                </div>
+                <br/>
+                <div class="hide" id="add_examuser_name_div">
+                    <label for="add_examuser_name">考生姓名:</label>
+                    <input type="text" name="add_examuser_name" id="add_examuser_name" onblur="examUserNameBlur()"/>
+                    <span id="add_examuser_name_err"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="add_examuser_btn" onclick="addOneExamUserSubmit()">
+                    确定
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<!-- 错误弹窗 -->
+<div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    错误信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                <span id="span_error"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                    确定
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<!--显示题目-->
+<div class="modal fade" id="show_question" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    查看题目
+                </h4>
+            </div>
+            <div class="modal-body pre-scrollable">
+                <div id="modal_question_kind"></div>
+                <div id="modal_question_content"></div>
+                <div id="modal_optionA"></div>
+                <div id="modal_optionB"></div>
+                <div id="modal_optionC"></div>
+                <div id="modal_optionD"></div>
+                <div id="modal_answer"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<!--编辑题目分数-->
+<div class="modal fade" id="edit_papercontent_mark" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    修改分数
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="papercontentid">
+                <label for="edit_mark">题目分数:</label>
+                <input type="text" name="edit_mark" id="edit_mark" onblur="markBlur()"/>
+                <span id="edit_mark_err"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="editmark_btn" onclick="editMark()">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+</div><!-- /.main-container -->
+
+<!-- basic scripts -->
+<!-- basic scripts -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<!--[if !IE]> -->
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    $(document).ready(function(){
+        fileInput();
+    })
+
+    <!--错误弹窗-->
+    function showError(err) {
+        $("#span_error").html(err);
+        $('#error').modal('show');
+    }
+
+    <!--创建试卷-->
+    function paperNameBlur() {
+        checkPaperName();
+    }
+
+    function paperNameSubmit() {
+        var paperName=$("#paperName").val();
+        if(checkPaperName()){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/addpaper",
+                dataType: 'json',
+                data: {"paperName": paperName},
+                success: function (data) {
+                    if(data.add_paper_result==true){
+                        $("#settingPaperName").val(data.paperInfo.paperName);
+                        $("#paperId").val(data.paperInfo.paperId);
+                        $("#shortAnswerQuestionMark").val(data.paperInfo.shortAnswerQuestionMark);
+                        $("#fillInBlankMark").val(data.paperInfo.fillInBlankMark);
+                        $("#trueOrFalseMark").val(data.paperInfo.trueOrFalseMark);
+                        $("#moreOptionMark").val(data.paperInfo.moreOptionMark);
+                        $("#oneOptionMark").val(data.paperInfo.oneOptionMark);
+                        if(data.paperInfo.oneOptionCheck==1)
+                            $("#oneOptionCheck").attr("checked","true");
+                        if(data.paperInfo.moreOptionCheck==1)
+                            $("#moreOptionCheck").attr("checked","true");
+                        if(data.paperInfo.trueOrFalseCheck==1)
+                            $("#trueOrFalseCheck").attr("checked","true");
+                        if(data.paperInfo.fillInBlankCheck==1)
+                            $("#fillInBlankCheck").attr("checked","true");
+                        $("#oneOptionCheck")
+                        $("#step_two").addClass('active');
+                        $("#step_two_div").removeClass('hide');
+                        $("#step_one_div").addClass('hide');
+                    }
+                    else
+                        $("#add_paper_err").html("试卷创建失败");
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+    }
+
+    function checkPaperName() {
+        var paperName=$("#paperName").val();
+        flag=false;
+        if(paperName==""){
+            $("#paperName_err").html("<font color='red'>"+"试卷名不能为空"+"</font>");
+            flag=false;
+        }
+        else if(paperName.length>8) {
+            $("#paperName_err").html("<font color='red'>" + "试卷名不能超过8个字符" + "</font>");
+            flag=false;
+        }
+        else {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkpapername",
+                dataType: 'json',
+                data: {"paperName": paperName},
+                success: function (data) {
+                    if (data == false)
+                        $("#paperName_err").html("<font color='red'>" + "试卷已存在" + "</font>");
+                    else
+                        $("#paperName_err").empty();
+                    flag = data;
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+
+    <!--试卷设置-->
+    function oneOptionMarkBlur() {
+        var mark=$("#oneOptionMark").val();
+        var errId="oneOptionMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function moreOptionMarkBlur() {
+        var mark=$("#moreOptionMark").val();
+        var errId="moreOptionMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function trueOrFalseMarkBlur() {
+        var mark=$("#trueOrFalseMark").val();
+        var errId="trueOrFalseMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function fillInBlankMarkBlur() {
+        var mark=$("#fillInBlankMark").val();
+        var errId="fillInBlankMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function shortAnswerQuestionMarkBlur() {
+        var mark=$("#shortAnswerQuestionMark").val();
+        var errId="shortAnswerQuestionMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function checkMark(mark,errId) {
+        var err="#"+errId;
+        var flag=false;
+        if(mark==""){
+            $(err).html("<font color='red'>" + "分数不能为空" + "</font>");
+            flag=false;
+        }
+        else {
+            if(!isNaN(mark)){
+                if(mark%0.5!=0||mark<0.5){
+                    $(err).html("<font color='red'>" + "分数最小单位为0.5" + "</font>");
+                    flag=false;
+                }
+                else {
+                    $(err).empty();
+                    flag=true;
+                }
+            }else{
+                $(err).html("<font color='red'>" + "存在非数字" + "</font>");
+                flag=false;
+            }
+        }
+        return flag;
+    }
+
+    function paperSettingSubmit() {
+        flag=true;
+        var paperId=$("#paperId").val();
+        var oneOptionMark=$("#oneOptionMark").val();
+        var moreOptionMark=$("#moreOptionMark").val();
+        var trueOrFalseMark=$("#trueOrFalseMark").val();
+        var fillInBlankMark=$("#fillInBlankMark").val();
+        var shortAnswerQuestionMark=$("#shortAnswerQuestionMark").val();
+        var oneOptionCheck=$("#oneOptionCheck").is(':checked');
+        var moreOptionCheck=$("#moreOptionCheck").is(':checked');
+        var trueOrFalseCheck=$("#trueOrFalseCheck").is(':checked');
+        var fillInBlankCheck=$("#fillInBlankCheck").is(':checked');
+        var paperName=$("#settingPaperName").val();
+        if(!oneOptionMarkBlur())
+            flag=false;
+        if(!moreOptionMarkBlur())
+            flag=false;
+        if(!trueOrFalseMarkBlur())
+            flag=false;
+        if(!fillInBlankMarkBlur())
+            flag=false;
+        if(!shortAnswerQuestionMarkBlur())
+            flag=false;
+
+        if(flag==true){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/settingpaper",
+                dataType: 'json',
+                data: {"paperName":paperName,"oneOptionMark": oneOptionMark,"moreOptionMark":moreOptionMark
+                    ,"trueOrFalseMark":trueOrFalseMark, "fillInBlankMark":fillInBlankMark
+                    ,"shortAnswerQuestionMark":shortAnswerQuestionMark,"oneOptionCheck":oneOptionCheck
+                    , "moreOptionCheck":moreOptionCheck,"trueOrFalseCheck":trueOrFalseCheck
+                    ,"fillInBlankCheck":fillInBlankCheck, "paperId":paperId},
+                success: function (data) {
+                    if (data == false)
+                        $("#add_paper_err").html("试卷设置失败" );
+                    else{
+                        $("#step_three").addClass('active');
+                        $("#step_three_div").removeClass('hide');
+                        $("#step_two_div").addClass('hide');
+                        getBankQuestion();
+                    }
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+    }
+
+    <!--添加考生-->
+    <!--逐个添加-->
+    function checkAddOneExamUser() {
+        $("#add_examuser_mail_err").empty();
+        $("#add_examuser_mail").val("");
+        $("#add_examuser_name_err").empty();
+        $("#add_examuser_name").val("");
+        $("#add_one_examuser").modal('show');
+    }
+
+    function examUserMailBlur() {
+        return checkMail();
+    }
+
+    function examUserNameBlur() {
+        var name=$("#add_examuser_name").val();
+        flag=false;
+        if (name == "") {
+            $("#add_examuser_name_err").html("<font color='red'>" + "姓名不能为空" + "</font>");
+            flag=false;
+        }
+        else if (name > 12) {
+            $("#add_examuser_name_err").html("<font color='red'>" + "姓名长度过长" + "</font>");
+            flag=false;
+        }
+        else {
+            $("#add_examuser_name_err").empty();
+            flag=true;
+        }
+        return flag;
+    }
+
+    function checkMail() {
+        var isEmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+        var mail = $('#add_examuser_mail').val();
+        var flag = false;
+        if (mail == "") {
+            $("#add_examuser_mail_err").html("<font color='red'>" + "邮箱不能为空" + "</font>");
+            flag = false;
+        }
+        else if (!(isEmail.test(mail))) {
+            $("#add_examuser_mail_err").html("<font color='red'>" + "邮箱格式不正确" + "</font>");
+            flag = false;
+        }
+        else {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkmail",
+                dataType: 'json',
+                data: {"mail": mail},
+                success: function (data) {
+                    $("#add_examuser_mail_err").empty();
+                    if (data == false) {
+                        $("#add_examuser_name_div").addClass('hide');
+                        $("#add_examuser_name_err").empty();
+                        $("#add_examuser_name").val("");
+                    }
+                    else
+                        $("#add_examuser_name_div").removeClass('hide');
+                    flag = true;
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+
+    function addOneExamUserSubmit() {
+        var mail=$("#add_examuser_mail").val();
+        var name=$("#add_examuser_name").val();
+        var paperId=$("#paperId").val();
+        if(checkMail()){
+            $('#add_one_examuser').modal('hide');
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/addoneexamuser",
+                dataType: 'json',
+                data: {"mail": mail,"name":name,"paperId":paperId},
+                success: function (data) {
+                    $("#add_one_examuser_err").html("<font color='red'>" + data.result_msg + "</font>");
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+    }
+
+    <!--excel添加-->
+    function fileInput(){
+        $('input[id=filename]').change(function() {
+            $('#excelCover').val($(this).val().replace("C:\\fakepath\\",""));
+        });
+    }
+
+    function addExcelExamUserSubmit() {
+        if(checkExcel()){
+            var formData = new FormData();
+            formData.append("file",$("#filename").prop("files")[0]);
+            formData.append("fileName",$("#filename").val().replace("C:\\fakepath\\",""));
+            formData.append("paperId",$("#paperId").val());
+            console.log(formData);
+            $.ajax({
+                url: "addexcelexamuser",
+                type: "POST",
+                data: formData,
+                /**
+                 *必须false才会自动加上正确的Content-Type
+                 */
+                contentType: false,
+                /**
+                 * 必须false才会避开jQuery对 formdata 的默认处理
+                 * XMLHttpRequest会对 formdata 进行正确的处理
+                 */
+                processData: false,
+                success: function (data) {
+                    if (data == true) {
+                        $("#add_excel_examuser_err").html("<font color='red'>" + "导入成功" + "</font>");
+                    }
+                    if (data == false) {
+                        $("#add_excel_examuser_err").html("<font color='red'>" + "导入失败" + "</font>");
+                    }
+                    $("#filename").val("");
+                    $("#excelCover").val("");
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        }
+    }
+
+    function checkExcel() {
+        var fileName=$("#filename").val();
+        if(fileName==""){
+            $("#add_excel_examuser_err").html("<font color='red'>" + "上传文件不能为空" + "</font>");
+            return false;
+        }
+        else{
+            var size = $("#filename")[0].files[0].size;
+            if(size/1000>1024){
+                $("#add_excel_examuser_err").html("<font color='red'>" + "上传文件不能超过1M" + "</font>");
+                return false;
+            }
+            else {
+                $("#add_excel_examuser_err").empty();
+                return true;
+            }
+        }
+    }
+
+    <!--添加题目-->
+    function addPaperSubmit() {
+        $("#step_four").addClass('active');
+        $("#step_four_div").removeClass('hide');
+        $("#step_three_div").addClass('hide');
+    }
+
+    <!--搜索初始化-->
+    function searchInit() {
+        $("#bank").val(0);
+        $("#kind").val(0);
+        $("#hidden_search_question_content").val("");
+        $("#search_question_content").val("");
+        $("#search_question_btn").removeClass('hide');
+        $("#search_question_return_btn").addClass('hide');
+    }
+
+    function getBankQuestion() {
+        $("#add_paper_err").empty();
+        if($("#show_mode").val()=="paper")
+            searchInit();
+        $("#show_mode").val('bank');
+        $("#show_bank_question_btn").addClass('hide');
+        $("#show_paper_content_btn").removeClass('hide');
+        $("#all_bank").removeClass('hide');
+        $("#all_kind").removeClass('hide');
+
+        $("#change_tr").html("题库");
+
+        var pageNum=$("#question_pageNum").val();
+        var search=$("#search_question_content").val();
+        var bankId=$("#bank").val();
+        var kindId=$("#kind").val();
+        var paperId=$("#paperId").val();
+
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpagebankquestion",
+            dataType: 'json',
+            data: {"pageNum":pageNum,"onePageNum":5,"search":search,"bankId":bankId,"kindId":kindId,"paperId":paperId},
+            success: function (data) {
+                $("#all_question_num").html("共有"+data.all_question_num+"条记录");
+                $("#question_page_all_num").html(data.question_page_all_num);
+                $("#question_pageNum").val(data.question_pageNum);
+                $("#hidden_question_pageNum").val(data.question_pageNum);
+
+                $("#add_paper_err").html("试卷题目总数:"+data.paper_all_question_num+"  试卷总分:"+data.paper_all_mark);
+
+                var str="";
+                if(data.one_page_question!="{}"){
+                    for(var k in data.one_page_question){
+                        str+="<tr role='row' class='even'>" +
+                            "<td><a href='#' onclick='showQuestion("+data.one_page_question[k].questionId+")'>"+data.one_page_question[k].questionContent+"</a></td>" +
+                            "<td>"+data.one_page_question[k].questionKind.kindName+"</td>" +
+                            "<td>"+data.one_page_question[k].questionBank.bankName+"</td>" +
+                            "<td>" +
+                            "<div class='hidden-sm hidden-xs action-buttons'>" +
+                            "<a class='blue' href='#' onclick='showQuestion("+data.one_page_question[k].questionId+")'>" +
+                            "<i class='ace-icon fa fa-search-plus bigger-130'></i>" +
+                            "</a>";
+                        if(data.one_page_question[k].statu==0) {
+                            str += "<a class='blue' href='#' onclick='addQuestionToPaper("+data.one_page_question[k].questionId+")'>" +
+                                "<i class='ace-icon glyphicon glyphicon-plus bigger-130'></i>" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "</tr>";
+                        }
+                        else if(data.one_page_question[k].statu==1){
+                            str += "<a class='blue' href='#' onclick='deleteQuestionToPaper("+data.one_page_question[k].questionId+")'>" +
+                                "<i class='ace-icon glyphicon glyphicon-minus bigger-130'></i>" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                }
+                $("#question_tbody").html(str);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+
+    }
+    
+    function getPaperContent() {
+        $("#add_paper_err").empty();
+        if($("#show_mode").val()=="bank")
+            searchInit();
+        $("#show_mode").val('paper');
+        $("#show_bank_question_btn").removeClass('hide');
+        $("#show_paper_content_btn").addClass('hide');
+        $("#all_bank").addClass('hide');
+        $("#all_kind").addClass('hide');
+        var pageNum=$("#question_pageNum").val();
+        var paperId=$("#paperId").val();
+        var search=$("#search_question_content").val();
+
+        $("#change_tr").html("分数");
+
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpagepapercontentquestion",
+            dataType: 'json',
+            data: {"paperId": paperId,"pageNum":pageNum,"onePageNum":5,"search":search},
+            success: function (data) {
+                $("#all_question_num").html("共有"+data.all_question_num+"条记录");
+                $("#question_page_all_num").html(data.question_page_all_num);
+                $("#question_pageNum").val(data.question_pageNum);
+                $("#hidden_question_pageNum").val(data.question_pageNum);
+                $("#add_paper_err").html("试卷题目总数:"+data.paper_all_question_num+"  试卷总分:"+data.paper_all_mark);
+
+                var str="";
+                if(data.one_page_question!="{}"){
+                    for(var k in data.one_page_question){
+                        str+="<tr role='row' class='even'>" +
+                            "<td><a href='#' onclick='showQuestion("+data.one_page_question[k].question.questionId+")'>"+data.one_page_question[k].question.questionContent+"</a></td>" +
+                            "<td>"+data.one_page_question[k].question.questionKind.kindName+"</td>" +
+                            "<td>"+data.one_page_question[k].questionMark+"</td>" +
+                            "<td>" +
+                            "<div class='hidden-sm hidden-xs action-buttons'>" +
+                            "<a class='blue' href='#' onclick='showQuestion("+data.one_page_question[k].question.questionId+")'>" +
+                            "<i class='ace-icon fa fa-search-plus bigger-130'></i>" +
+                            "</a>" +
+                            "<a class='blue' href='#' onclick='checkEdit("+data.one_page_question[k].paperCotentId+","+data.one_page_question[k].questionMark+")'>" +
+                            "<i class='ace-icon fa fa-pencil bigger-130'></i>" +
+                            "</a>" +
+                            "<a class='red' href='#' onclick='deleteQuestion("+data.one_page_question[k].paperCotentId+")'>" +
+                            "<i class='ace-icon fa fa-trash-o bigger-130'></i>" +
+                            "</a>" +
+                            "</div>" +
+                            "</td>" +
+                            "</tr>"
+                    }
+                }
+                $("#question_tbody").html(str);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    function searchQuestion() {
+        var search=$("#search_question_content").val();
+        if($("#show_mode").val()=="bank"){
+            getBankQuestion();
+            $("#search_question_return_btn").removeClass('hide');
+        }
+        else if($("#show_mode").val()=="paper"){
+            if(search!="") {
+                getPaperContent();
+                $("#search_question_return_btn").removeClass('hide');
+            }
+        }
+    }
+
+    function searchQuestionReturn() {
+        searchInit();
+        if ($("#show_mode").val() == "bank") {
+            getBankQuestion();
+        }
+        else if ($("#show_mode").val() == "paper"){
+            getPaperContent();
+        }
+    }
+
+    <!--查看试题-->
+    function showQuestion(questionId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/showquestion",
+            dataType: 'json',
+            data: {"questionId":questionId},
+            success: function(data){
+                var kindName=data.questionKind.kindName;
+                var questionContent=data.questionContent;
+                var optionA=data.optionA;
+                var optionB=data.optionB;
+                var optionC=data.optionC;
+                var optionD=data.optionD;
+                var answer=data.questionAnsewer;
+                $("#modal_question_kind").html("");
+                $("#modal_question_content").html("");
+                $("#modal_optionA").html("");
+                $("#modal_optionB").html("");
+                $("#modal_optionC").html("");
+                $("#modal_optionD").html("");
+                $("#modal_answer").html("");
+
+                $("#modal_question_kind").html("题目类型:"+kindName+"<hr/>");
+                $("#modal_question_content").html("试题:"+questionContent+"<hr/>");
+                $("#modal_optionA").html("A:"+optionA+"<hr/>");
+                $("#modal_optionB").html("B:"+optionB+"<hr/>");
+                $("#modal_optionC").html("C:"+optionC+"<hr/>");
+                $("#modal_optionD").html("D:"+optionD+"<hr/>");
+                $("#modal_answer").html("答案:"+answer);
+
+                if(kindName=="")
+                    $("#modal_question_kind").attr("class","hide");
+                else
+                    $("#modal_question_kind").attr("class","show");
+
+                if(questionContent=="")
+                    $("#modal_question_content").attr("class","hide");
+                else
+                    $("#modal_question_content").attr("class","show");
+
+                if(optionA=="")
+                    $("#modal_optionA").attr("class","hide");
+                else
+                    $("#modal_optionA").attr("class","show");
+
+                if(optionB=="")
+                    $("#modal_optionB").attr("class","hide");
+                else
+                    $("#modal_optionB").attr("class","show");
+
+                if(optionC=="")
+                    $("#modal_optionC").attr("class","hide");
+                else
+                    $("#modal_optionC").attr("class","show");
+
+                if(optionD=="")
+                    $("#modal_optionD").attr("class","hide");
+                else
+                    $("#modal_optionD").attr("class","show");
+
+                if(answer=="")
+                    $("#modal_answer").attr("class","hide");
+                else
+                    $("#modal_answer").attr("class","show");
+                $('#show_question').modal('show')
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--删除试题-->
+    function deleteQuestion(paperContentId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deletepapercontentquestion",
+            dataType: 'json',
+            data: {"paperContentId": paperContentId},
+            success: function (data) {
+                if(data==true)
+                    getPaperContent();
+                else
+                    showError("试题删除失败");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--编辑题目分数弹窗-->
+    function checkEdit(paperContentId,mark) {
+        $("#papercontentid").val(paperContentId);
+        $("#edit_mark").val(mark);
+        $('#edit_papercontent_mark').modal('show');
+    }
+
+    function markBlur() {
+        var mark=$("#edit_mark").val();
+        checkMark(mark,"edit_mark_err");
+    }
+
+    function editMark() {
+        var mark=$("#edit_mark").val();
+        var paperContentId=$("#papercontentid").val();
+        if(checkMark(mark,"edit_mark_err")){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/editpapercontentmark",
+                dataType: 'json',
+                data: {"paperContentId": paperContentId,"mark":mark},
+                success: function (data) {
+                    if(data==true)
+                        getPaperContent();
+                    else
+                        showError("分数修改失败");
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+            $('#edit_papercontent_mark').modal('hide');
+        }
+    }
+
+    <!--手动换页-->
+    function changePage() {
+        var newPageNum=$("#question_pageNum").val();
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var maxPageNum=$("#question_page_all_num").html();
+        if(!isNaN(newPageNum)){//是数字
+            if(Number(newPageNum)>Number(maxPageNum)||Number(newPageNum)<1)
+                $("#question_pageNum").val(oldPageNum);
+            else {
+                $("#question_pageNum").val(newPageNum);
+                $("#hidden_question_pageNum").val(newPageNum);
+                // getPaperContent();
+                if($("#show_mode").val()=="bank"){
+                    getBankQuestion();
+                }
+                else if($("#show_mode").val()=="paper"){
+                    getPaperContent();
+                }
+            }
+        }
+        else if(isNaN(newPageNum)) {//非数字
+            $("#question_pageNum").val(oldPageNum);
+        }
+    }
+
+    <!--到第一页-->
+    function gotoFirstPage() {
+        if($("#question_pageNum").val()>1) {
+            $("#question_pageNum").val('1');
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--上一页-->
+    function gotoPrePage() {
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var newPageNum=Number(oldPageNum)-1;
+        if(Number(oldPageNum)>1) {
+            $("#question_pageNum").val(newPageNum);
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--下一页-->
+    function gotoNextPage() {
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var maxPageNum=$("#question_page_all_num").html();
+        var newPageNum=Number(oldPageNum)+1;
+        if(Number(oldPageNum)+1<=Number(maxPageNum)) {
+            $("#question_pageNum").val(newPageNum);
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--到末页-->
+    function gotoLastPage() {
+        var maxPageNum=$("#question_page_all_num").html();
+        if($("#question_pageNum").val()<Number(maxPageNum)) {
+            $("#question_pageNum").val(maxPageNum);
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--试卷添加题目-->
+    function addQuestionToPaper(questionId) {
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/addquestiontopaper",
+            dataType: 'json',
+            data: {"questionId": questionId,"paperId":paperId},
+            success: function (data) {
+                if(data==true)
+                    getBankQuestion();
+                else
+                    showError("添加题目失败");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--试卷删除题目-->
+    function deleteQuestionToPaper(questionId) {
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deletequestiontopaper",
+            dataType: 'json',
+            data: {"questionId": questionId,"paperId":paperId},
+            success: function (data) {
+                if(data==true)
+                    getBankQuestion();
+                else
+                    showError("移除题目失败");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--考生部分-->
+    function getPageExamUser() {
+        var paperId=$("#paperId").val();
+        var pageNum=$("#examuser_pageNum").val();
+        var search=$("#search_examuser_content").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpageexamuser",
+            dataType: 'json',
+            data: {"paperId":paperId,"pageNum":pageNum,"onePageNum":5,"search":search},
+            success: function (data) {
+                $("#all_examuser_num").html("共有"+data.allExamUserNum+"条记录");
+                $("#examuser_page_all_num").html(data.examuser_page_all_num);
+                $("#examuser_pageNum").val(data.examuser_pageNum);
+                $("#hidden_examuser_pageNum").val(data.examuser_pageNum);
+
+                var str="";
+                if(data.one_page_examuser!="{}"){
+                    for(var k in data.one_page_examuser){
+                        str+= "<tr role='row' class='even'>" +
+                            "<td>"+data.one_page_examuser[k].mail+"</td>" +
+                            "<td>"+data.one_page_examuser[k].name+"</td>" +
+                            "<td>" +
+                            "<div class='hidden-sm hidden-xs action-buttons'>" +
+                            "<a class='red' href='#' onclick='deleteExamUser("+data.one_page_examuser[k].userId+")'>" +
+                            "<i class='ace-icon fa fa-trash-o bigger-130'></i>" +
+                            "</a>" +
+                            "</div>" +
+                            "</td>" +
+                            "</tr>";
+                    }
+                }
+                $("#examuser_tbody").html(str);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+    
+    function deleteExamUser(userId) {
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deleteexamuser",
+            dataType: 'json',
+            data: {"userId":userId,"paperId":paperId},
+            success: function (data) {
+                if(data==true)
+                    getPageExamUser();
+                else if(data==false)
+                    showError("删除考生出错");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+    
+    function showAddExamUser() {
+        $("#add_examuser").removeClass('hide');
+        $("#show_examuser").addClass('hide');
+        $("#show_examuser_btn").removeClass('hide');
+        $("#show_add_examuser_btn").addClass('hide');
+    }
+
+    function showEditExamUser() {
+        $("#add_examuser").addClass('hide');
+        $("#show_examuser").removeClass('hide');
+        $("#show_examuser_btn").addClass('hide');
+        $("#show_add_examuser_btn").removeClass('hide');
+        $("#add_excel_examuser_err").empty();
+        $("#add_one_examuser_err").empty();
+        getPageExamUser();
+    }
+
+    function gotoExamUserFirstPage() {
+        if($("#examuser_pageNum").val()>1) {
+            $("#examuser_pageNum").val('1');
+            getPageExamUser();
+        }
+    }
+
+    function gotoExamUserPrePage() {
+        var oldPageNum=$("#hidden_examuser_pageNum").val();
+        var newPageNum=Number(oldPageNum)-1;
+        if(Number(oldPageNum)>1) {
+            $("#examuser_pageNum").val(newPageNum);
+            getPageExamUser();
+        }
+    }
+
+    function changeExamUserPage() {
+        var newPageNum=$("#examuser_pageNum").val();
+        var oldPageNum=$("#hidden_examuser_pageNum").val();
+        var maxPageNum=$("#examuser_page_all_num").html();
+        if(!isNaN(newPageNum)) {//是数字
+            if (Number(newPageNum) > Number(maxPageNum) || Number(newPageNum) < 1)
+                $("#examuser_pageNum").val(oldPageNum);
+            else {
+                $("#examuser_pageNum").val(newPageNum);
+                $("#hidden_examuser_pageNum").val(newPageNum);
+                getPageExamUser();
+            }
+        }
+    }
+
+    function gotoExamUserNextPage() {
+        var oldPageNum=$("#hidden_examuser_pageNum").val();
+        var maxPageNum=$("#examuser_page_all_num").html();
+        var newPageNum=Number(oldPageNum)+1;
+        if(Number(oldPageNum)+1<=Number(maxPageNum)) {
+            $("#examuser_pageNum").val(newPageNum);
+            getPageExamUser();
+        }
+    }
+
+    function gotoExamUserLastPage() {
+        var maxPageNum=$("#examuser_page_all_num").html();
+        if($("#examuser_pageNum").val()<Number(maxPageNum)) {
+            $("#examuser_pageNum").val(maxPageNum);
+            getPageExamUser();
+        }
+    }
+    
+    function searchExamUser() {
+        var search=$("#search_examuser_content").val();
+        if(search!=""){
+            $("#search_examuser_btn").addClass('hide');
+            $("#search_examuser_return_btn").removeClass('hide');
+            getPageExamUser();
+        }
+    }
+    
+    function searchExamUserReturn() {
+        $("#hidden_search_examuser_content").val("");
+        $("#search_examuser_content").val("");
+        $("#search_examuser_btn").removeClass('hide');
+        $("#search_examuser_return_btn").addClass('hide');
+        getPageExamUser();
+    }
+
+</script>
+
+</body>
+</html>

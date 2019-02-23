@@ -7,11 +7,14 @@ import java.util.List;
 @Data
 public class User {
 
-    private int userid;
+    private int userId;
     private String mail;
     private String password;
     private String name;
-    private String picpath;
+    private String picPath;
     private List<QuestionBank> questionBanks;
+    private List<PaperGroup> paperGroups;
+    private List<ExamUser> examUsers;
+    private List<Result> results;
 
 }

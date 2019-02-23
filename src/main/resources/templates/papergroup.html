@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>试卷管理</title>
+
+    <meta name="description" content="responsive photo gallery using colorbox" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!--datetimepicker-->
+    <link type="text/css" href="http://code.jquery.com/ui/1.9.1/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+
+    <link href="datetimepicker/addon/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.css" type="text/css" />
+    <link href="datetimepicker/addon/jQuery-Timepicker-Addon/demos.css" rel="stylesheet" type="text/css" />
+
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+    <link rel="stylesheet" href="assets/css/colorbox.min.css" />
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+
+
+
+    <![endif]-->
+</head>
+
+<body class="no-skin">
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <div class="navbar-container ace-save-state" id="navbar-container">
+        <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+            <span class="sr-only">Toggle sidebar</span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+        </button>
+        <div class="navbar-header pull-left">
+            <small class="navbar-brand">
+                <i class="fa fa-leaf"></i>
+                在线考试系统
+            </small>
+        </div>
+
+        <div class="navbar-buttons navbar-header pull-right" role="navigation">
+            <ul class="nav ace-nav">
+                <li class="light-blue dropdown-modal">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" height="40" width="40"
+                             th:src="${session.user.getPicPath()!=null}? (${session.user.getPicPath()}) : 'assets/images/myimages/user.jpg'"
+                             alt="头像"/>
+                        <span class="user-info">
+                                <small>欢迎登录</small>
+                                <span th:text="${session.user.getName()}" th:if="${session.user!=null}"></span>
+                        </span>
+
+                        <i class="ace-icon fa fa-caret-down"></i>
+                    </a>
+
+                    <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li>
+                            <a href="logout">
+                                <i class="ace-icon fa fa-power-off"></i>
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /.navbar-container -->
+</div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
+
+    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+        <script type="text/javascript">
+            try{ace.settings.loadState('sidebar')}catch(e){}
+        </script>
+
+        <ul class="nav nav-list">
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=index)}">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> 首页 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=questionbank)}">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> 题库管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="active">
+                <a href="#" th:href="@{/gotopage(pagename=papergroup)}">
+                    <i class="menu-icon fa fa-picture-o"></i>
+                    <span class="menu-text"> 试卷管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=markexam)}">
+                    <i class="menu-icon fa fa-pencil-square-o"></i>
+                    <span class="menu-text"> 试卷批阅 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=myexam)}">
+                    <i class="menu-icon fa fa-file-o"></i>
+                    <span class="menu-text"> 我的考试 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-tag"></i>
+                    <span class="menu-text"> 帐号管理 </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <b class="arrow"></b>
+
+                <ul class="submenu">
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editphoto)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改头像
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editname)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改姓名
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editmail)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改邮箱
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editpassword)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改密码
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                </ul>
+            </li>
+
+        </ul><!-- /.nav-list -->
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-content">
+            <div class="page-header">
+                <h1>试卷管理 </h1>
+            </div><!-- /.page-header -->
+
+            <div class="row">
+                <input type="hidden" id="err_msg" th:value="${err_msg}" />
+                <div class="col-xs-12">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div>
+                        <div class="row search-page" id="search-page-1">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-3">
+                                        <div class="search-area well well-sm">
+                                            <div class="search-filter-header bg-primary">
+                                                <h5 class="smaller no-margin-bottom">
+                                                    <i class="ace-icon fa fa-sliders light-green bigger-130"></i>&nbsp; 试卷分组列表
+                                                </h5>
+                                            </div>
+
+                                            <div class="space-10"></div>
+
+                                            <button class="btn btn-sm btn-block" onclick="checkAdd()">新建分组</button>
+
+                                            <div class="space-10"></div>
+
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-11 col-md-10">
+                                                    <div class="input-group">
+                                                        <input type="hidden" id="hidden_search_paper_group" th:value="${search_paper_group_content}">
+                                                        <input type="text" class="form-control" id="search_paper_group_content" name="search_content" placeholder="搜索分组">
+                                                        <div class="input-group-btn">
+                                                            <button type="button" class="btn btn-default no-border btn-sm" id="search_paper_group_btn" onclick="searchPaperGroup()">
+                                                                <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-default no-border btn-sm hide" id="search_paper_group_return_btn" onclick="searchPaperGroupReturn()">
+                                                                <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="hr hr-dotted"></div>
+
+                                            <div class="pre-scrollable" id="list_paper_group"></div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-9">
+                                        <div class="row">
+                                            <div>
+                                                <div id="dynamic-table_wrapper" class="dataTables_wrapper form-inline no-footer">
+                                                    <div class="row">
+                                                        <div class="col-xs-6">
+                                                            <div class="dataTables_length" id="dynamic-table_length">
+                                                            <form method="post" action="#" th:action="@{/gotoaddpaperpage}">
+                                                                <!--存在选中题库-->
+                                                                <input type="text" name="selectedgroup" id="selected_group" th:value="${session.selected_group.getPaperGroupId()}" th:if="${session.selected_group!=null}">
+                                                                <!--不存在选中题库-->
+                                                                <input type="text" name="selectedgroup" id="selected_group" value="" th:if="${session.selected_group==null}">
+                                                                <button type="button" id="add_paper_page_btn" onclick="addPaperPage()">添加试卷</button>
+                                                            </form>
+
+                                                            <!--每页显示个数-->
+                                                            <!--<label>显示-->
+                                                            <!--<select name="dynamic-table_length" aria-controls="dynamic-table" class="form-control input-sm">-->
+                                                            <!--<option value="10">10</option><option value="25">25</option>-->
+                                                            <!--<option value="50">50</option><option value="100">100</option>-->
+                                                            <!--</select> 条记录-->
+                                                            <!--</label>-->
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6">
+                                                            <div id="dynamic-table_filter" class="dataTables_filter">
+                                                                <label>
+                                                                    <input type="hidden" id="hidden_search_paper_content">
+                                                                    <input type="search" id="search_paper_content" class="form-control input-sm" placeholder="搜索试卷" aria-controls="dynamic-table">
+
+                                                                    <button type="button" id="search_paper_btn" class="btn btn-mini no-border btn-info2" onclick="searchPaper()">
+                                                                        <i class="ace-icon fa fa-search icon-only bigger-110"></i>
+                                                                    </button>
+                                                                    <button type="button" id="search_paper_return_btn" class="btn btn-mini no-border btn-info2 hide" onclick="searchPaperReturn()">
+                                                                        <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                                                                    </button>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <table id="dynamic-table" class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th class="center" rowspan="1" colspan="1" aria-label="">
+                                                                编号
+                                                            </th>
+                                                            <th tabindex="0" aria-controls="dynamic-table" rowspan="1" colspan="1" >
+                                                                试卷名称
+                                                            </th>
+                                                            <th tabindex="0" aria-controls="dynamic-table" rowspan="1" colspan="1">
+                                                                试卷设置
+                                                            </th>
+                                                            <th tabindex="0" aria-controls="dynamic-table" rowspan="1" colspan="1">
+                                                                学生管理
+                                                            </th>
+                                                            <th tabindex="0" aria-controls="dynamic-table" rowspan="1" colspan="1">
+                                                                题目管理
+                                                            </th>
+                                                            <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="">操作</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                        <tbody id="paper_tbody">
+
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="row">
+                                                        <div class="message-footer clearfix">
+                                                            <div class="pull-left" id="all_paper_num"></div>
+
+                                                            <div class="pull-right">
+                                                                <div class="inline middle" >
+                                                                    共<span id="paper_page_all_num"></span>页
+                                                                </div>
+
+                                                                &nbsp; &nbsp;
+                                                                <ul class="pagination middle">
+                                                                    <li>
+                                                                        <a href="#" onclick="gotoFirstPage()">
+                                                                            <i class="ace-icon fa fa-step-backward middle"></i>
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <li>
+                                                                        <a href="#" onclick="gotoPrePage()">
+                                                                            <i class="ace-icon fa fa-caret-left bigger-140 middle"></i>
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <li>
+                                                                            <span th:if="${session.paper_pageNum!=null}">
+                                                                                <input type="hidden" id="hidden_paper_pageNum" th:value="${session.paper_pageNum}">
+                                                                                <input maxlength="3" type="text" id="paper_pageNum" onblur="changePage()" th:value="${session.paper_pageNum}">
+                                                                            </span>
+                                                                        <span th:if="${session.paper_pageNum==null}">
+                                                                                <input type="hidden" id="hidden_paper_pageNum">
+                                                                                <input maxlength="3" type="text" id="paper_pageNum" onblur="changePage()" value="1">
+                                                                            </span>
+                                                                    </li>
+
+                                                                    <li>
+                                                                        <a href="#" onclick="gotoNextPage()">
+                                                                            <i class="ace-icon fa fa-caret-right bigger-140 middle"></i>
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <li>
+                                                                        <a href="#" onclick="gotoLastPage()">
+                                                                            <i class="ace-icon fa fa-step-forward middle"></i>
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- PAGE CONTENT ENDS -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.page-content -->
+    </div><!-- /.main-content -->
+
+    <div class="footer">
+        <div class="footer-inner">
+            <div class="footer-content">
+						<span class="bigger-120">
+							<span class="blue bolder">在线考试系统</span>
+							王文杰 &copy; 2018
+						</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加分组弹窗 -->
+    <div class="modal fade" id="add_paper_group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        添加分组
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <label for="add_groupname">分组名称:</label>
+                    <input type="text" name="add_groupname" id="add_groupname" onblur="checkAddBlur()"/>
+                    <span id="add_groupname_err"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="add_group_btn" onclick="checkAddSubmit()">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 修改分组弹窗 -->
+    <div class="modal fade" id="edit_paper_group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        修改分组
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit_paper_group_id" />
+                    <input type="hidden" id="old_group_name" />
+                    <label for="edit_groupname">分组名称:</label>
+                    <input type="text" name="edit_groupname" id="edit_groupname" onblur="checkEditBlur()"/>
+                    <span id="edit_groupname_err"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="editbank_btn" onclick="checkEditSubmit()">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--删除分组弹窗-->
+    <div class="modal fade" id="delete_paper_group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        删除分组
+                    </h4>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="delete_paper_group_id" />
+                    选择的分组被删除，该分组内的试卷将会被同步删除。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="deletePaperGroup()">
+                        确定
+                    </button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 错误弹窗 -->
+    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        错误信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <span id="span_error" th:text="${err_msg}"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 考生管理弹窗 -->
+    <div class="modal fade" id="editExamUser_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        考生管理
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="hide" id="add_examuser">
+                        <div>
+                            <h3 class="lighter block green">逐个添加
+                                <span id="add_one_examuser_err"></span>
+                            </h3>
+                            <div>
+                                <label for="add_examuser_mail">考生邮箱:</label>
+                                <input type="text" name="add_examuser_mail" id="add_examuser_mail" onblur="examUserMailBlur()"/>
+                                <span id="add_examuser_mail_err"></span>
+                            </div>
+                            <br/>
+                            <div class="hide" id="add_examuser_name_div">
+                                <label for="add_examuser_name">考生姓名:</label>
+                                <input type="text" name="add_examuser_name" id="add_examuser_name" onblur="examUserNameBlur()"/>
+                                <span id="add_examuser_name_err"></span>
+                            </div>
+                            <button class="btn btn-sm btn-warning" onclick="addOneExamUserSubmit()">
+                                <span class="bigger-110 no-text-shadow">添加</span>
+                            </button>
+                        </div>
+                        <div>
+                            <h3 class="lighter block green">Excel导入
+                                <a href="#" th:href="@{/downloadexamusermould}">模板下载</a>
+                                <span id="add_excel_examuser_err"></span>
+                            </h3>
+                            <input name="fileName" id="filename" type="file" style="display:none"
+                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+                                                       , application/vnd.ms-excel" />
+                            <div class="input-append">
+                                <input id="excelCover" class="input-large" type="text"/>
+                                <a class="btn btn-white btn-success" onclick="$('input[id=filename]').click();">选择文件</a>
+
+                                <button class="btn btn-sm btn-warning" onclick="addExcelExamUserSubmit()">
+                                    <span class="bigger-110 no-text-shadow">导入</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="show_examuser">
+                        <div class="pull-right">
+                            <input type="hidden" id="hidden_search_examuser_content">
+                            <input type="search" id="search_examuser_content" class="input-sm" placeholder="搜索考生" aria-controls="dynamic-table" value="">
+                            <button type="button" id="search_examuser_btn" class="btn btn-mini no-border btn-info2" onclick="searchExamUser()">
+                                <i class="ace-icon fa fa-search icon-only bigger-110"></i>
+                            </button>
+                            <button type="button" id="search_examuser_return_btn" class="btn btn-mini no-border btn-info2 hide" onclick="searchExamUserReturn()">
+                                <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                            </button>
+                        </div>
+                        <br/><br/>
+                        <div>
+                            <table class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
+                                <thead>
+                                <tr>
+                                    <th>邮箱</th>
+                                    <th>姓名</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="examuser_tbody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="message-footer clearfix">
+                            <div class="pull-left" id="all_examuser_num"></div>
+
+                            <div class="pull-right">
+                                <div class="inline middle">
+                                    共<span id="examuser_page_all_num"></span>页
+                                </div>
+
+                                &nbsp; &nbsp;
+                                <ul class="pagination middle">
+                                    <li>
+                                        <a href="#" onclick="gotoExamUserFirstPage()">
+                                            <i class="ace-icon fa fa-step-backward middle"></i>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" onclick="gotoExamUserPrePage()">
+                                            <i class="ace-icon fa fa-caret-left bigger-140 middle"></i>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <span>
+                                            <input type="hidden" id="hidden_examuser_pageNum">
+                                            <input maxlength="3" type="text" id="examuser_pageNum" onblur="changeExamUserPage()" value="1">
+                                        </span>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" onclick="gotoExamUserNextPage()">
+                                            <i class="ace-icon fa fa-caret-right bigger-140 middle"></i>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" onclick="gotoExamUserLastPage()">
+                                            <i class="ace-icon fa fa-step-forward middle"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="wizard-actions">
+                        <input type="hidden" id="editExamUserStatu">
+                        <input type="hidden" id="paperId">
+                        <button class="btn btn-success btn-next hide" data-last="Finish"
+                                id="show_examuser_btn" type="button" onclick="showEditExamUser()">查看考生</button>
+                        <button class="btn btn-success btn-next" data-last="Finish"
+                                id="show_add_examuser_btn" type="button" onclick="showAddExamUser()">添加考生</button>
+
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            关闭
+                        </button>
+                    </div>
+                    <!--<button type="button" class="btn btn-primary" data-dismiss="modal">-->
+                        <!--确定-->
+                    <!--</button>-->
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 题目管理弹窗 -->
+    <div class="modal fade" id="editQuestion_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        题目管理
+                        <span id="add_paper_err"></span>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div >
+                        <div class="col-xs-12 col-sm-3" style="margin-bottom:16px;">
+                            <div id="all_bank" class="hide row">
+                                <select class="input-medium col-xs-6" id="bank" name="bank">
+                                    <option id='all_bank_option' value='0'>所有题库</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-3" style="margin-bottom:16px;">
+                            <div id="all_kind" class="hide">
+                                <select class="input-medium" id="kind" name="kind">
+                                    <option id='all_kind_option' value='0'>所有题型</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-6" style="margin-bottom:16px;">
+                            <input type="hidden" id="hidden_search_question_content">
+                            <input type="search" id="search_question_content" class="input-sm" placeholder="搜索题目" aria-controls="dynamic-table" value="">
+                            <button type="button" id="search_question_btn" class="btn btn-mini no-border btn-info2" onclick="searchQuestion()">
+                                <i class="ace-icon fa fa-search icon-only bigger-110"></i>
+                            </button>
+                            <button type="button" id="search_question_return_btn" class="btn btn-mini no-border btn-info2 hide" onclick="searchQuestionReturn()">
+                                <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <table class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
+                            <thead>
+                            <tr>
+                                <th>题目内容</th>
+                                <th>题型</th>
+                                <th id="change_tr">分数</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="question_tbody">
+                            </tbody>
+                        </table>
+                        <div class="message-footer clearfix">
+                            <div class="pull-left" id="all_question_num"></div>
+
+                            <div class="pull-right">
+                                <div class="inline middle">
+                                    共<span id="question_page_all_num"></span>页
+                                </div>
+
+                                &nbsp; &nbsp;
+                                <ul class="pagination middle">
+                                    <li>
+                                        <a href="#" onclick="gotoFirstPage()">
+                                            <i class="ace-icon fa fa-step-backward middle"></i>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" onclick="gotoPrePage()">
+                                            <i class="ace-icon fa fa-caret-left bigger-140 middle"></i>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <span>
+                                            <input type="hidden" id="hidden_question_pageNum">
+                                            <input maxlength="3" type="text" id="question_pageNum" onblur="changePage()" value="1">
+                                        </span>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" onclick="gotoNextPage()">
+                                            <i class="ace-icon fa fa-caret-right bigger-140 middle"></i>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="#" onclick="gotoLastPage()">
+                                            <i class="ace-icon fa fa-step-forward middle"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="editQuestionStatu">
+                    <input type="hidden" id="editQuestion_paperId">
+                    <input type="hidden" id="show_mode" value="paper">
+                    <button class="btn btn-success btn-next hide" data-last="Finish"
+                            id="show_bank_question_btn" type="button" onclick="getBankQuestion()">添加题目</button>
+                    <button class="btn btn-success btn-next" data-last="Finish"
+                            id="show_paper_content_btn" type="button" onclick="getPaperContent()">查看试卷</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--显示题目-->
+    <div class="modal fade" id="show_question" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        查看题目
+                    </h4>
+                </div>
+                <div class="modal-body pre-scrollable">
+                    <div id="modal_question_kind"></div>
+                    <div id="modal_question_content"></div>
+                    <div id="modal_optionA"></div>
+                    <div id="modal_optionB"></div>
+                    <div id="modal_optionC"></div>
+                    <div id="modal_optionD"></div>
+                    <div id="modal_answer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--编辑题目分数-->
+    <div class="modal fade" id="edit_papercontent_mark" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        修改分数
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="papercontentid">
+                    <label for="edit_mark">题目分数:</label>
+                    <input type="text" name="edit_mark" id="edit_mark" onblur="markBlur()"/>
+                    <span id="edit_mark_err"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="editmark_btn" onclick="editMark()">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 发布考试弹窗 -->
+    <div class="modal fade" id="release_exam_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        发布考试
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <!--<div>-->
+                        <!--<label for="paper_start">开始时间:</label>-->
+                        <!--<input type="text" id="paper_start"/>-->
+                        <!--<span id="paper_start_err"></span>-->
+                    <!--</div>-->
+                    <!--<div>-->
+                        <!--<label for="paper_end">结束时间:</label>-->
+                        <!--<input type="text" id="paper_end"/>-->
+                        <!--<span id="paper_end_err"></span>-->
+                    <!--</div>-->
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="time">开始时间</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="time" placeholder="" class="form-control" onblur="checkTimeWithNow(this)">
+                                </div>
+                                <label class="col-sm-3 control-label text-danger " for="time" style="text-align: left;">
+
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="time">考试时长（分）</label>
+                                <div class="col-sm-6">
+                                    <input type="number" id="duringTime" placeholder="" class="form-control" value="120" onchange="checkDuringTime(this)">
+                                </div>
+                                <label class="col-sm-3 control-label text-danger" for="time"  style="text-align: left;">
+
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="release_paperId">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="releaseExam()">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--显示考试时间-->
+    <div class="modal fade" id="show_examtime_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        考试时间
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="time">开始时间</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="start_time" placeholder="" class="form-control disabled">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="time">结束时间</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="end_time" placeholder="" class="form-control disabled">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+</div><!-- /.main-container -->
+
+
+
+<!-- basic scripts -->
+<!-- basic scripts -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<!--[if !IE]> -->
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        <!--初始化-->
+        initPage();
+
+        <!--搜索初始化-->
+        clearGroupSearch();
+
+        fileInput();
+
+    })
+
+    function initPage() {
+        getPaperGroup();
+    }
+
+    <!--加载试卷分组-->
+    function getPaperGroup() {
+        var search=$("#hidden_search_paper_group").val();
+        var addGroupName=$('#add_groupname').val();
+        var editGroupName=$("#edit_groupname").val();
+        if(search!=""){
+            $("#search_paper_group_return_btn").show();
+        }
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpapergroup",
+            dataType: 'json',
+            data: {"search":search,"addGroupName":addGroupName,"editGroupName":editGroupName},
+            success: function(data){
+                var str="";
+                if(data==""){
+                    str="<span>没有题库</span>"
+                }
+                else{
+                    str="<ul class='list-group'>";
+                    if($("#selected_group").val()==""||search!="")
+                        $("#selected_group").val(data[0].paperGroupId);
+                    for(var k in data){
+                        if(addGroupName!=""&&addGroupName==data[k].paperGroupName)//添加题库
+                            $("#selected_group").val(data[k].paperGroupId);
+                        else if(editGroupName!=""&&editGroupName==data[k].paperGroupName)//重命名题库
+                            $("#selected_group").val(data[k].paperGroupId);
+                        str+="<li class='list-group-item' id='"+data[k].paperGroupId+"'>" +
+                            "<div><span><a onclick="+"'getPaper("+data[k].paperGroupId+",1)'>"+data[k].paperGroupName+"</a></span>" +
+                            "<div class='pull-right action-buttons'><a class='green' href='#' onclick=checkEdit("+data[k].paperGroupId+",'"+data[k].paperGroupName+"')>" +
+                            "<i class='ace-icon fa fa-pencil bigger-130'></i>" +
+                            "</a>" +
+                            "<a class='red' href='#' onclick='checkDelete("+data[k].paperGroupId+")'>" +
+                            "<i class='ace-icon fa fa-trash-o bigger-130'></i>" +
+                            "</a></div></div>" +
+                            "</li>"
+                    }
+                    str+="</ul>"
+                }
+                $("#list_paper_group").html(str);
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+        getPaper($("#selected_group").val(),$("#paper_pageNum").val());
+    }
+
+    <!--加载试卷-->
+    function getPaper(groupId,pageNum) {
+        //分组选中状态
+        var oldGroupId=$("#selected_group").val();
+        var getOldGroup="#"+oldGroupId;
+        $(getOldGroup).removeClass('active');
+        $("#selected_group").val(groupId);
+        $("#"+groupId).addClass('active');
+
+        //加载试卷
+        var search=$("#hidden_search_paper_content").val();
+        if(search!=""){
+            $("#search_paper_return_btn").removeClass('hide');
+        }
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpaper",
+            dataType: 'json',
+            data: {"groupId":groupId,"pageNum":pageNum,"onePageNum":10,"search":search},
+            success: function(data){
+                $("#all_paper_num").html("共有"+data.all_paper_num+"条记录");
+                $("#paper_page_all_num").html(data.paper_page_all_num);
+                $("#paper_pageNum").val(data.paper_pageNum);
+                $("#hidden_paper_pageNum").val(data.paper_pageNum);
+                <!--加载题目-->
+                var str="";
+                if(data.one_page_paper!="{}"){
+                    for(var k in data.one_page_paper){
+                        var count=Number(k)+1;
+
+                        if(!data.one_page_paper[k].hasOwnProperty("paperStart")&&!data.one_page_paper[k].hasOwnProperty("paperEnd")){//未发布
+                            str+="<tr role='row' class='even'>" +
+                                " <td class='text-center'>"+count+"</td>" +
+                                "<td><a target='_blank' href='gotoshowpaperpage?paperId="+data.one_page_paper[k].paperId+"'>"+data.one_page_paper[k].paperName+"</a></td>" +
+                                "<td>"+
+                                "<div class='hidden-sm hidden-xs action-buttons'>" +
+                                "<a class='blue' href='gotoeditpaperpage?paperid="+data.one_page_paper[k].paperId+"'>" +
+                                "设置" +
+                                "</a>" +
+                                "<a class='red' href='#' onclick='deletePaper("+data.one_page_paper[k].paperId+",1)'>" +
+                                "删除" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "<td>"+
+                                "<a class='blue' href='#' onclick='showEditExamUserModal("+data.one_page_paper[k].paperId+",1)'>" +
+                                "考生管理" +
+                                "</a>" +
+                                "</td>" +
+                                "<td>"+
+                                "<a class='blue' href='#' onclick='showEditQuestionModal("+data.one_page_paper[k].paperId+",1)'>" +
+                                "题目管理" +
+                                "</a>" +
+                                "</td>" +
+                                "<td>" ;
+                            str+="<a href='#' onclick='showReleaseExamModal("+data.one_page_paper[k].paperId+")'>发布</a>";
+                        }
+                        else {
+                            str+="<tr role='row' class='even'>" +
+                                " <td class='text-center'>"+count+"</td>" +
+                                "<td><a target='_blank' href='gotoshowpaperpage?paperId="+data.one_page_paper[k].paperId+"'>"+data.one_page_paper[k].paperName+"</a></td>" +
+                                "<td>"+
+                                "<div class='hidden-sm hidden-xs action-buttons'>" +
+                                "<a class='blue' href='gotoeditpaperpage?paperid="+data.one_page_paper[k].paperId+"'>" +
+                                "设置" +
+                                "</a>" +
+                                "<a class='red' href='#' onclick='deletePaper("+data.one_page_paper[k].paperId+",0)'>" +
+                                "删除" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "<td>"+
+                                "<a class='blue' href='#' onclick='showEditExamUserModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                "考生管理" +
+                                "</a>" +
+                                "</td>" +
+                                "<td>"+
+                                "<a class='blue' href='#' onclick='showEditQuestionModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                "题目管理" +
+                                "</a>" +
+                                "</td>" +
+                                "<td>" ;
+                            var startTime = stringToDate(data.one_page_paper[k].paperStart);
+                            var endTime = stringToDate(data.one_page_paper[k].paperEnd);
+                            var dateNow = new Date(Date.now());
+                            if(endTime.getTime() < dateNow.getTime()){
+                                str+="<a href='/gotomarkexam?pagename=markexam&paperId="+data.one_page_paper[k].paperId+"'>已结束</a>";
+                            }
+                            else if(startTime.getTime() > dateNow.getTime()){
+                                str+="<a href='#' onclick='cancelRelease("+data.one_page_paper[k].paperId+")'>撤销发布</a>";
+                            }
+                            else {
+                                str+="<span>考试中</span>";
+                            }
+                            str+="  <a href='#' onclick='showExamTimeModal("+data.one_page_paper[k].paperId+")'>查看考试时间</a>";
+                        }
+                         str+="</td></tr>";
+                    }
+                }
+                $("#paper_tbody").html(str);
+                <!--加载题目-->
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--搜索分组-->
+    function searchPaperGroup() {
+        $("#hidden_search_paper_group").val($("#search_paper_group_content").val());
+        $("#search_paper_group_return_btn").removeClass('hide');
+        getPaperGroup();
+    }
+
+    <!--取消搜索分组-->
+    function clearGroupSearch() {
+        $("#hidden_search_paper_group").val("");
+        $("#search_paper_group_content").val("");
+        $("#search_paper_group_return_btn").addClass('hide');
+    }
+
+    function searchPaperGroupReturn() {
+        clearGroupSearch();
+        getPaperGroup();
+    }
+
+    <!--搜索试卷-->
+    function searchPaper() {
+        $("#hidden_search_paper_content").val($("#search_paper_content").val());
+        getPaper($("#selected_group").val(),1);
+    }
+
+    <!--取消搜索试卷-->
+    function clearPaperSearch() {
+        $("#hidden_search_paper_content").val("");
+        $("#search_paper_content").val("");
+        $("#search_paper_return_btn").addClass('hide');
+    }
+
+    function searchPaperReturn() {
+        clearPaperSearch();
+        getPaper($("#selected_group").val(),1);
+    }
+
+    <!--添加分组-->
+    <!--弹出添加弹窗-->
+    function checkAdd() {
+        //清空题库重命名弹窗
+        $("#edit_paper_group_id").val("");
+        $("#old_group_name").val("");
+        $("#edit_groupname").val("");
+        $("#edit_groupname_err").empty();
+
+        $("#add_groupname").val("");
+        $("#add_groupname_err").empty();
+        $('#add_paper_group').modal('show');
+    }
+    
+    function checkAddGroupName() {
+        var groupname=$('#add_groupname').val();
+        var flag=false;
+        if(groupname==""){
+            $("#add_groupname_err").html("<font color='red'>"+"分组名不能为空"+"</font>");
+            flag=false;
+        }
+        else if(groupname.length>8){
+            $("#add_groupname_err").html("<font color='red'>"+"分组名不能超过8个字符"+"</font>");
+            flag=false;
+        }
+        else{
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkgroupname",
+                dataType: 'json',
+                data: {"groupname":groupname},
+                success: function(data){
+                    if(data==false)
+                        $("#add_groupname_err").html("<font color='red'>"+"分组已存在"+"</font>");
+                    else
+                        $("#add_groupname_err").empty();
+                    flag=data;
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+    
+    function checkAddSubmit() {
+        if(checkAddGroupName()){
+            addPaperGroup();
+        }
+    }
+
+    function checkAddBlur() {
+        checkAddGroupName();
+    }
+
+    function addPaperGroup() {
+        var search=$("#hidden_search_paper_group").val();
+        $('#add_paper_group').modal('hide');
+        var groupName=$('#add_groupname').val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/addpapergroup",
+            dataType: 'json',
+            data: {"groupName":groupName,"search":search},
+            success: function(data){
+                if(data==true){
+                    initPage();
+                }
+                else{
+                    showError("题库添加失败");
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--重命名题库-->
+    <!--弹出重命名弹窗-->
+    function checkEdit(groupId,groupName) {
+        //清空添加分组弹框
+        $("#add_groupname").val("");
+        $("#add_groupname_err").empty();
+
+        $("#edit_paper_group_id").val(groupId);
+        $("#old_group_name").val(groupName);
+        $("#edit_groupname").val(groupName);
+        $("#edit_groupname_err").empty();
+        $("#edit_paper_group").modal('show');
+    }
+
+    function checkEditGroupName() {
+        var groupname=$('#edit_groupname').val();
+        var oldgroupname=$("#old_group_name").val();
+        var flag=false;
+        if(groupname==""){
+            $("#edit_groupname_err").html("<font color='red'>"+"分组名不能为空"+"</font>");
+            flag=false;
+        }
+        else if(groupname.length>8){
+            $("#edit_groupname_err").html("<font color='red'>"+"分组名不能超过8个字符"+"</font>");
+            flag=false;
+        }
+        else if(groupname==oldgroupname){
+            flag=true;
+        }
+        else{
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkgroupname",
+                dataType: 'json',
+                data: {"groupname":groupname},
+                success: function(data){
+                    if(data==false)
+                        $("#edit_groupname_err").html("<font color='red'>"+"分组已存在"+"</font>");
+                    else
+                        $("#edit_groupname_err").empty();
+                    flag=data;
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+
+    function checkEditBlur() {
+        checkEditGroupName();
+    }
+
+    function checkEditSubmit() {
+        if(checkEditGroupName())
+            EditGroupName();
+    }
+
+    function EditGroupName() {
+        var search=$("#hidden_search_paper_group").val();
+        var groupId=$("#edit_paper_group_id").val();
+        var groupName=$("#edit_groupname").val();
+        $("#edit_paper_group").modal('hide');
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/editpapergroup",
+            dataType: 'json',
+            data: {"groupId":groupId,"groupName":groupName,"search":search},
+            success: function(data){
+                if(data==true){
+                    initPage();
+                }
+                else{
+                    showError("题库重命名失败");
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--删除分组-->
+    <!--弹出删除弹窗-->
+    function checkDelete(groupId) {
+        $("#delete_paper_group_id").val(groupId);
+        $('#delete_paper_group').modal('show');
+    }
+
+    function deletePaperGroup() {
+
+        $('#delete_paper_group').modal('hide');
+        var groupId=$("#delete_paper_group_id").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deletepapergroup",
+            dataType: 'json',
+            data: {"groupId":groupId},
+            success: function(data){
+                if(data==true){
+                    initPage();
+                }
+                else{
+                    showError("分组删除失败");
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+
+    }
+
+    <!--跳转添加试卷-->
+    function addPaperPage() {
+        var selectd_group=$("#selected_group").val();
+        if(selectd_group=="") {
+            $("#add_paper_page_btn").attr("type","button");
+            showError("请先选择分组");
+        }
+        else
+            $("#add_paper_page_btn").attr("type","submit");
+    }
+
+    <!--错误弹窗-->
+    function showError(err_msg) {
+        if($("#span_error").html(err_msg)){
+            $('#error').modal('show');
+        }
+    }
+    
+    <!--到第一页-->
+    function gotoFirstPage() {
+        if($("#paper_pageNum").val()>1)
+            getPaper($("#selected_group").val(),1)
+    }
+    
+    <!--上一页-->
+    function gotoPrePage() {
+        var oldPageNum=$("#hidden_paper_pageNum").val();
+        var newPageNum=Number(oldPageNum)-1;
+        if(Number(oldPageNum)>1) {
+            getPaper($("#selected_group").val(), newPageNum);
+        }
+    }
+
+    <!--手动换页-->
+    function changePage() {
+        var newPageNum=$("#paper_pageNum").val();
+        var oldPageNum=$("#hidden_paper_pageNum").val();
+        var maxPageNum=$("#paper_page_all_num").html();
+        if(!isNaN(newPageNum)){//是数字
+            if(Number(newPageNum)>Number(maxPageNum)||Number(newPageNum)<1)
+                $("#paper_pageNum").val(oldPageNum);
+            else {
+                $("#paper_pageNum").val(newPageNum);
+                $("#hidden_paper_pageNum").val(newPageNum);
+                getPaper($("#selected_group").val(),newPageNum);
+            }
+        }
+        else if(isNaN(newPageNum)) {//非数字
+            $("#paper_pageNum").val(oldPageNum);
+        }
+    }
+
+    <!--下一页-->
+    function gotoNextPage() {
+        var oldPageNum=$("#hidden_paper_pageNum").val();
+        var maxPageNum=$("#paper_page_all_num").html();
+        var newPageNum=Number(oldPageNum)+1;
+        if(Number(oldPageNum)+1<=Number(maxPageNum)) {
+            getPaper($("#selected_group").val(), newPageNum);
+        }
+    }
+
+    <!--到末页-->
+    function gotoLastPage() {
+        var maxPageNum=$("#paper_page_all_num").html();
+        if($("#paper_pageNum").val()<Number(maxPageNum)) {
+            getPaper($("#selected_group").val(), Number(maxPageNum));
+        }
+    }
+
+    <!--删除试卷-->
+    function deletePaper(paperId,paperStatu) {
+        if(paperStatu==0){
+            $("#span_error").html("试卷已发布,不能删除");
+            showError();
+        }
+        else if(paperStatu==1){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/deletepaper",
+                dataType: 'json',
+                data: {"paperId":paperId},
+                success: function(data){
+                    if(data==true){
+                        getPaper($("#selected_group").val(),$("#paper_pageNum").val());
+                    }
+                    else if(data==false){
+                        $("#span_error").html("删除失败");
+                        showError();
+                    }
+
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+    }
+
+    <!--考生管理-->
+    function showEditExamUserModal(paperId,paperStatu) {
+        $("#paperId").val(paperId);
+        $("#editExamUserStatu").val(paperStatu);
+        if(paperStatu==0){
+            $("#show_add_examuser_btn").addClass("hide");
+        }
+        else if (paperStatu==1) {
+            $("#show_add_examuser_btn").removeClass("hide");
+        }
+        searchExamUserReturn();
+        $('#editExamUser_modal').modal('show');
+    }
+
+    function getPageExamUser() {
+        var paperStatu=$("#editExamUserStatu").val();
+        var paperId=$("#paperId").val();
+        var pageNum=$("#examuser_pageNum").val();
+        var search=$("#search_examuser_content").val();
+        if(paperStatu==0){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/getpageexamuser",
+                dataType: 'json',
+                data: {"paperId":paperId,"pageNum":pageNum,"onePageNum":5,"search":search},
+                success: function (data) {
+                    $("#all_examuser_num").html("共有"+data.allExamUserNum+"条记录");
+                    $("#examuser_page_all_num").html(data.examuser_page_all_num);
+                    $("#examuser_pageNum").val(data.examuser_pageNum);
+                    $("#hidden_examuser_pageNum").val(data.examuser_pageNum);
+
+                    var str="";
+                    if(data.one_page_examuser!="{}"){
+                        for(var k in data.one_page_examuser){
+                            str+= "<tr role='row' class='even'>" +
+                                "<td>"+data.one_page_examuser[k].mail+"</td>" +
+                                "<td>"+data.one_page_examuser[k].name+"</td>" +
+                                "<td>" +
+
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                    $("#examuser_tbody").html(str);
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+        else if (paperStatu==1){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/getpageexamuser",
+                dataType: 'json',
+                data: {"paperId":paperId,"pageNum":pageNum,"onePageNum":5,"search":search},
+                success: function (data) {
+                    $("#all_examuser_num").html("共有"+data.allExamUserNum+"条记录");
+                    $("#examuser_page_all_num").html(data.examuser_page_all_num);
+                    $("#examuser_pageNum").val(data.examuser_pageNum);
+                    $("#hidden_examuser_pageNum").val(data.examuser_pageNum);
+
+                    var str="";
+                    if(data.one_page_examuser!="{}"){
+                        for(var k in data.one_page_examuser){
+                            str+= "<tr role='row' class='even'>" +
+                                "<td>"+data.one_page_examuser[k].mail+"</td>" +
+                                "<td>"+data.one_page_examuser[k].name+"</td>" +
+                                "<td>" +
+                                "<div class='hidden-sm hidden-xs action-buttons'>" +
+                                "<a class='red' href='#' onclick='deleteExamUser("+data.one_page_examuser[k].userId+")'>" +
+                                "<i class='ace-icon fa fa-trash-o bigger-130'></i>" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                    $("#examuser_tbody").html(str);
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+
+    }
+
+    function deleteExamUser(userId) {
+        var paperId=$("#paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deleteexamuser",
+            dataType: 'json',
+            data: {"userId":userId,"paperId":paperId},
+            success: function (data) {
+                if(data==true)
+                    getPageExamUser();
+                else if(data==false)
+                    showError("删除考生出错");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    function showAddExamUser() {
+        $("#add_examuser").removeClass('hide');
+        $("#show_examuser").addClass('hide');
+        $("#show_examuser_btn").removeClass('hide');
+        $("#show_add_examuser_btn").addClass('hide');
+        $("#filename").val("");
+        $("#excelCover").val("");
+        $("#add_examuser_mail").val("");
+        $("#add_examuser_name").val("");
+        $("#add_examuser_mail_err").val("");
+        $("#add_examuser_name_err").val("");
+    }
+
+    function showEditExamUser() {
+        $("#add_examuser").addClass('hide');
+        $("#show_examuser").removeClass('hide');
+        $("#show_examuser_btn").addClass('hide');
+        $("#show_add_examuser_btn").removeClass('hide');
+        $("#add_excel_examuser_err").empty();
+        $("#add_one_examuser_err").empty();
+        $("#filename").val("");
+        $("#excelCover").val("");
+        $("#add_examuser_mail").val("");
+        $("#add_examuser_name").val("");
+        $("#add_examuser_mail_err").val("");
+        $("#add_examuser_name_err").val("");
+        getPageExamUser();
+    }
+
+    function gotoExamUserFirstPage() {
+        if($("#examuser_pageNum").val()>1) {
+            $("#examuser_pageNum").val('1');
+            getPageExamUser();
+        }
+    }
+
+    function gotoExamUserPrePage() {
+        var oldPageNum=$("#hidden_examuser_pageNum").val();
+        var newPageNum=Number(oldPageNum)-1;
+        if(Number(oldPageNum)>1) {
+            $("#examuser_pageNum").val(newPageNum);
+            getPageExamUser();
+        }
+    }
+
+    function changeExamUserPage() {
+        var newPageNum=$("#examuser_pageNum").val();
+        var oldPageNum=$("#hidden_examuser_pageNum").val();
+        var maxPageNum=$("#examuser_page_all_num").html();
+        if(!isNaN(newPageNum)) {//是数字
+            if (Number(newPageNum) > Number(maxPageNum) || Number(newPageNum) < 1)
+                $("#examuser_pageNum").val(oldPageNum);
+            else {
+                $("#examuser_pageNum").val(newPageNum);
+                $("#hidden_examuser_pageNum").val(newPageNum);
+                getPageExamUser();
+            }
+        }
+    }
+
+    function gotoExamUserNextPage() {
+        var oldPageNum=$("#hidden_examuser_pageNum").val();
+        var maxPageNum=$("#examuser_page_all_num").html();
+        var newPageNum=Number(oldPageNum)+1;
+        if(Number(oldPageNum)+1<=Number(maxPageNum)) {
+            $("#examuser_pageNum").val(newPageNum);
+            getPageExamUser();
+        }
+    }
+
+    function gotoExamUserLastPage() {
+        var maxPageNum=$("#examuser_page_all_num").html();
+        if($("#examuser_pageNum").val()<Number(maxPageNum)) {
+            $("#examuser_pageNum").val(maxPageNum);
+            getPageExamUser();
+        }
+    }
+
+    function searchExamUser() {
+        var search=$("#search_examuser_content").val();
+        if(search!=""){
+            $("#search_examuser_btn").addClass('hide');
+            $("#search_examuser_return_btn").removeClass('hide');
+            getPageExamUser();
+        }
+    }
+
+    function searchExamUserReturn() {
+        $("#hidden_search_examuser_content").val("");
+        $("#search_examuser_content").val("");
+        $("#search_examuser_btn").removeClass('hide');
+        $("#search_examuser_return_btn").addClass('hide');
+        getPageExamUser();
+    }
+
+    function examUserMailBlur() {
+        return checkMail();
+    }
+
+    function examUserNameBlur() {
+        var name=$("#add_examuser_name").val();
+        flag=false;
+        if (name == "") {
+            $("#add_examuser_name_err").html("<font color='red'>" + "姓名不能为空" + "</font>");
+            flag=false;
+        }
+        else if (name > 12) {
+            $("#add_examuser_name_err").html("<font color='red'>" + "姓名长度过长" + "</font>");
+            flag=false;
+        }
+        else {
+            $("#add_examuser_name_err").empty();
+            flag=true;
+        }
+        return flag;
+    }
+
+    function addOneExamUserSubmit() {
+        var mail=$("#add_examuser_mail").val();
+        var name=$("#add_examuser_name").val();
+        var paperId=$("#paperId").val();
+        if(checkMail()){
+            $('#add_one_examuser').modal('hide');
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/addoneexamuser",
+                dataType: 'json',
+                data: {"mail": mail,"name":name,"paperId":paperId},
+                success: function (data) {
+                    $("#add_examuser_mail").val("");
+                    $("#add_examuser_name").val("");
+                    $("#add_one_examuser_err").html("<font color='red'>" + data.result_msg + "</font>");
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+    }
+
+    function checkMail() {
+        var isEmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+        var mail = $('#add_examuser_mail').val();
+        var flag = false;
+        if (mail == "") {
+            $("#add_examuser_mail_err").html("<font color='red'>" + "邮箱不能为空" + "</font>");
+            flag = false;
+        }
+        else if (!(isEmail.test(mail))) {
+            $("#add_examuser_mail_err").html("<font color='red'>" + "邮箱格式不正确" + "</font>");
+            flag = false;
+        }
+        else {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkmail",
+                dataType: 'json',
+                data: {"mail": mail},
+                success: function (data) {
+                    $("#add_examuser_mail_err").empty();
+                    if (data == false) {
+                        $("#add_examuser_name_div").addClass('hide');
+                        $("#add_examuser_name_err").empty();
+                        $("#add_examuser_name").val("");
+                    }
+                    else
+                        $("#add_examuser_name_div").removeClass('hide');
+                    flag = true;
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+
+    <!--excel添加-->
+    function fileInput(){
+        $('input[id=filename]').change(function() {
+            $('#excelCover').val($(this).val().replace("C:\\fakepath\\",""));
+        });
+    }
+
+    function addExcelExamUserSubmit() {
+        if(checkExcel()){
+            var formData = new FormData();
+            formData.append("file",$("#filename").prop("files")[0]);
+            formData.append("fileName",$("#filename").val().replace("C:\\fakepath\\",""));
+            formData.append("paperId",$("#paperId").val());
+            console.log(formData);
+            $.ajax({
+                url: "addexcelexamuser",
+                type: "POST",
+                data: formData,
+                /**
+                 *必须false才会自动加上正确的Content-Type
+                 */
+                contentType: false,
+                /**
+                 * 必须false才会避开jQuery对 formdata 的默认处理
+                 * XMLHttpRequest会对 formdata 进行正确的处理
+                 */
+                processData: false,
+                success: function (data) {
+                    if (data == true) {
+                        $("#add_excel_examuser_err").html("<font color='red'>" + "导入成功" + "</font>");
+                    }
+                    if (data == false) {
+                        $("#add_excel_examuser_err").html("<font color='red'>" + "导入失败" + "</font>");
+                    }
+                    $("#filename").val("");
+                    $("#excelCover").val("");
+                    $("#add_examuser_mail").val("");
+                    $("#add_examuser_name").val("");
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        }
+    }
+
+    function checkExcel() {
+        var fileName=$("#filename").val();
+        if(fileName==""){
+            $("#add_excel_examuser_err").html("<font color='red'>" + "上传文件不能为空" + "</font>");
+            return false;
+        }
+        else{
+            var size = $("#filename")[0].files[0].size;
+            if(size/1000>1024){
+                $("#add_excel_examuser_err").html("<font color='red'>" + "上传文件不能超过1M" + "</font>");
+                return false;
+            }
+            else {
+                $("#add_excel_examuser_err").empty();
+                return true;
+            }
+        }
+    }
+
+    <!--判断是否已发布-->
+    function checkRelease(paperId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpapertime",
+            dataType: 'json',
+            data: {"paperId":paperId},
+            success: function(data){
+                if(!data.hasOwnProperty("paperStart")||!data.hasOwnProperty("paperEnd")){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+    
+    <!--题目管理-->
+    function showEditQuestionModal(paperId,paperStatu) {
+        $("#editQuestionStatu").val(paperStatu);
+        $("#editQuestion_paperId").val(paperId);
+        var bankResult=getAllBank();
+        var kindResult=getAllKind();
+        if(paperStatu==0){
+
+        }
+        else if(paperStatu==1){
+
+        }
+
+        $('#editQuestion_modal').modal('show');
+        getPaperContent();
+    }
+
+    function getAllBank() {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "getallbank",
+            dataType: 'json',
+            data: {},
+            success: function (data) {
+                for(var k in data){
+                    // console.log(data[k].bankId+"   "+data[k].bankName);
+                    $("#bank").append("<option value="+data[k].bankId+">"+data[k].bankName+"</option>");
+                }
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    function getAllKind() {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "getallkind",
+            dataType: 'json',
+            data: {},
+            success: function (data) {
+                for(var k in data){
+                    // console.log(data[k].kindId+"----"+data[k].kindName);
+                    $("#kind").append("<option value="+data[k].kindId+">"+data[k].kindName+"</option>");
+                }
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--搜索初始化-->
+    function searchInit() {
+        $("#bank").val(0);
+        $("#kind").val(0);
+        $("#hidden_search_question_content").val("");
+        $("#search_question_content").val("");
+        $("#search_question_btn").removeClass('hide');
+        $("#search_question_return_btn").addClass('hide');
+    }
+
+    function getPaperContent() {
+        var paperStatu=$("#editQuestionStatu").val();
+        $("#add_paper_err").empty();
+        if($("#show_mode").val()=="bank")
+            searchInit();
+        $("#show_mode").val('paper');
+
+        // $("#show_bank_question_btn").removeClass('hide');
+
+        $("#show_paper_content_btn").addClass('hide');
+        $("#all_bank").addClass('hide');
+        $("#all_kind").addClass('hide');
+        var pageNum=$("#question_pageNum").val();
+        var paperId=$("#editQuestion_paperId").val();
+        var search=$("#search_question_content").val();
+
+        $("#change_tr").html("分数");
+
+        if(paperStatu==0){
+            $("#show_bank_question_btn").addClass('hide');
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/getpagepapercontentquestion",
+                dataType: 'json',
+                data: {"paperId": paperId,"pageNum":pageNum,"onePageNum":5,"search":search},
+                success: function (data) {
+                    $("#all_question_num").html("共有"+data.all_question_num+"条记录");
+                    $("#question_page_all_num").html(data.question_page_all_num);
+                    $("#question_pageNum").val(data.question_pageNum);
+                    $("#hidden_question_pageNum").val(data.question_pageNum);
+                    $("#add_paper_err").html("试卷题目总数:"+data.paper_all_question_num+"  试卷总分:"+data.paper_all_mark);
+
+                    var str="";
+                    if(data.one_page_question!="{}"){
+                        for(var k in data.one_page_question){
+                            str+="<tr role='row' class='even'>" +
+                                "<td><a href='#' onclick='showQuestion("+data.one_page_question[k].question.questionId+")'>"+data.one_page_question[k].question.questionContent+"</a></td>" +
+                                "<td>"+data.one_page_question[k].question.questionKind.kindName+"</td>" +
+                                "<td>"+data.one_page_question[k].questionMark+"</td>" +
+                                "<td>" +
+                                "<div class='hidden-sm hidden-xs action-buttons'>" +
+                                "<a class='blue' href='#' onclick='showQuestion("+data.one_page_question[k].question.questionId+")'>" +
+                                "<i class='ace-icon fa fa-search-plus bigger-130'></i>" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "</tr>"
+                        }
+                    }
+                    $("#question_tbody").html(str);
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+        else if(paperStatu==1){
+            $("#show_bank_question_btn").removeClass('hide');
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/getpagepapercontentquestion",
+                dataType: 'json',
+                data: {"paperId": paperId,"pageNum":pageNum,"onePageNum":5,"search":search},
+                success: function (data) {
+                    $("#all_question_num").html("共有"+data.all_question_num+"条记录");
+                    $("#question_page_all_num").html(data.question_page_all_num);
+                    $("#question_pageNum").val(data.question_pageNum);
+                    $("#hidden_question_pageNum").val(data.question_pageNum);
+                    $("#add_paper_err").html("试卷题目总数:"+data.paper_all_question_num+"  试卷总分:"+data.paper_all_mark);
+
+                    var str="";
+                    if(data.one_page_question!="{}"){
+                        for(var k in data.one_page_question){
+                            str+="<tr role='row' class='even'>" +
+                                "<td><a href='#' onclick='showQuestion("+data.one_page_question[k].question.questionId+")'>"+data.one_page_question[k].question.questionContent+"</a></td>" +
+                                "<td>"+data.one_page_question[k].question.questionKind.kindName+"</td>" +
+                                "<td>"+data.one_page_question[k].questionMark+"</td>" +
+                                "<td>" +
+                                "<div class='hidden-sm hidden-xs action-buttons'>" +
+                                "<a class='blue' href='#' onclick='showQuestion("+data.one_page_question[k].question.questionId+")'>" +
+                                "<i class='ace-icon fa fa-search-plus bigger-130'></i>" +
+                                "</a>" +
+                                "<a class='blue' href='#' onclick='checkEdit("+data.one_page_question[k].paperCotentId+","+data.one_page_question[k].questionMark+")'>" +
+                                "<i class='ace-icon fa fa-pencil bigger-130'></i>" +
+                                "</a>" +
+                                "<a class='red' href='#' onclick='deleteQuestion("+data.one_page_question[k].paperCotentId+")'>" +
+                                "<i class='ace-icon fa fa-trash-o bigger-130'></i>" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "</tr>"
+                        }
+                    }
+                    $("#question_tbody").html(str);
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+
+
+    }
+
+    <!--查看试题-->
+    function showQuestion(questionId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/showquestion",
+            dataType: 'json',
+            data: {"questionId":questionId},
+            success: function(data){
+                var kindName=data.questionKind.kindName;
+                var questionContent=data.questionContent;
+                var optionA=data.optionA;
+                var optionB=data.optionB;
+                var optionC=data.optionC;
+                var optionD=data.optionD;
+                var answer=data.questionAnsewer;
+                $("#modal_question_kind").html("");
+                $("#modal_question_content").html("");
+                $("#modal_optionA").html("");
+                $("#modal_optionB").html("");
+                $("#modal_optionC").html("");
+                $("#modal_optionD").html("");
+                $("#modal_answer").html("");
+
+                $("#modal_question_kind").html("题目类型:"+kindName+"<hr/>");
+                $("#modal_question_content").html("试题:"+questionContent+"<hr/>");
+                $("#modal_optionA").html("A:"+optionA+"<hr/>");
+                $("#modal_optionB").html("B:"+optionB+"<hr/>");
+                $("#modal_optionC").html("C:"+optionC+"<hr/>");
+                $("#modal_optionD").html("D:"+optionD+"<hr/>");
+                $("#modal_answer").html("答案:"+answer);
+
+                if(kindName=="")
+                    $("#modal_question_kind").attr("class","hide");
+                else
+                    $("#modal_question_kind").attr("class","show");
+
+                if(questionContent=="")
+                    $("#modal_question_content").attr("class","hide");
+                else
+                    $("#modal_question_content").attr("class","show");
+
+                if(optionA=="")
+                    $("#modal_optionA").attr("class","hide");
+                else
+                    $("#modal_optionA").attr("class","show");
+
+                if(optionB=="")
+                    $("#modal_optionB").attr("class","hide");
+                else
+                    $("#modal_optionB").attr("class","show");
+
+                if(optionC=="")
+                    $("#modal_optionC").attr("class","hide");
+                else
+                    $("#modal_optionC").attr("class","show");
+
+                if(optionD=="")
+                    $("#modal_optionD").attr("class","hide");
+                else
+                    $("#modal_optionD").attr("class","show");
+
+                if(answer=="")
+                    $("#modal_answer").attr("class","hide");
+                else
+                    $("#modal_answer").attr("class","show");
+                $('#show_question').modal('show')
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--删除试题-->
+    function deleteQuestion(paperContentId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deletepapercontentquestion",
+            dataType: 'json',
+            data: {"paperContentId": paperContentId},
+            success: function (data) {
+                if(data==true){
+                    getPaperContent();
+                }
+                else
+                    showError("试题删除失败");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--编辑题目分数弹窗-->
+    function checkEdit(paperContentId,mark) {
+        $("#papercontentid").val(paperContentId);
+        $("#edit_mark").val(mark);
+        $('#edit_papercontent_mark').modal('show');
+    }
+
+    function markBlur() {
+        var mark=$("#edit_mark").val();
+        checkMark(mark,"edit_mark_err");
+    }
+
+    function editMark() {
+        var mark=$("#edit_mark").val();
+        var paperContentId=$("#papercontentid").val();
+        if(checkMark(mark,"edit_mark_err")){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/editpapercontentmark",
+                dataType: 'json',
+                data: {"paperContentId": paperContentId,"mark":mark},
+                success: function (data) {
+                    alert(data);
+                    if(data==true)
+                        getPaperContent();
+                    else
+                        showError("分数修改失败");
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+            $('#edit_papercontent_mark').modal('hide');
+        }
+    }
+
+    function checkMark(mark,errId) {
+        var err="#"+errId;
+        var flag=false;
+        if(mark==""){
+            $(err).html("<font color='red'>" + "分数不能为空" + "</font>");
+            flag=false;
+        }
+        else {
+            if(!isNaN(mark)){
+                if(mark%0.5!=0||mark<0.5){
+                    $(err).html("<font color='red'>" + "分数最小单位为0.5" + "</font>");
+                    flag=false;
+                }
+                else {
+                    $(err).empty();
+                    flag=true;
+                }
+            }else{
+                $(err).html("<font color='red'>" + "存在非数字" + "</font>");
+                flag=false;
+            }
+        }
+        return flag;
+    }
+
+    function searchQuestion() {
+        var search=$("#search_question_content").val();
+        if($("#show_mode").val()=="bank"){
+            getBankQuestion();
+            $("#search_question_return_btn").removeClass('hide');
+        }
+        else if($("#show_mode").val()=="paper"){
+            if(search!="") {
+                getPaperContent();
+                $("#search_question_return_btn").removeClass('hide');
+            }
+        }
+    }
+
+    function searchQuestionReturn() {
+        searchInit();
+        if ($("#show_mode").val() == "bank") {
+            getBankQuestion();
+        }
+        else if ($("#show_mode").val() == "paper"){
+            getPaperContent();
+        }
+    }
+
+    function getBankQuestion() {
+        $("#add_paper_err").empty();
+        if($("#show_mode").val()=="paper")
+            searchInit();
+        $("#show_mode").val('bank');
+        $("#show_bank_question_btn").addClass('hide');
+        $("#show_paper_content_btn").removeClass('hide');
+        $("#all_bank").removeClass('hide');
+        $("#all_kind").removeClass('hide');
+
+        $("#change_tr").html("题库");
+
+        var pageNum=$("#question_pageNum").val();
+        var search=$("#search_question_content").val();
+        var bankId=$("#bank").val();
+        var kindId=$("#kind").val();
+        var paperId=$("#editQuestion_paperId").val();
+
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpagebankquestion",
+            dataType: 'json',
+            data: {"pageNum":pageNum,"onePageNum":5,"search":search,"bankId":bankId,"kindId":kindId,"paperId":paperId},
+            success: function (data) {
+                $("#all_question_num").html("共有"+data.all_question_num+"条记录");
+                $("#question_page_all_num").html(data.question_page_all_num);
+                $("#question_pageNum").val(data.question_pageNum);
+                $("#hidden_question_pageNum").val(data.question_pageNum);
+
+                $("#add_paper_err").html("试卷题目总数:"+data.paper_all_question_num+"  试卷总分:"+data.paper_all_mark);
+
+                var str="";
+                if(data.one_page_question!="{}"){
+                    for(var k in data.one_page_question){
+                        str+="<tr role='row' class='even'>" +
+                            "<td><a href='#' onclick='showQuestion("+data.one_page_question[k].questionId+")'>"+data.one_page_question[k].questionContent+"</a></td>" +
+                            "<td>"+data.one_page_question[k].questionKind.kindName+"</td>" +
+                            "<td>"+data.one_page_question[k].questionBank.bankName+"</td>" +
+                            "<td>" +
+                            "<div class='hidden-sm hidden-xs action-buttons'>" +
+                            "<a class='blue' href='#' onclick='showQuestion("+data.one_page_question[k].questionId+")'>" +
+                            "<i class='ace-icon fa fa-search-plus bigger-130'></i>" +
+                            "</a>";
+                        if(data.one_page_question[k].statu==0) {
+                            str += "<a class='blue' href='#' onclick='addQuestionToPaper("+data.one_page_question[k].questionId+")'>" +
+                                "<i class='ace-icon glyphicon glyphicon-plus bigger-130'></i>" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "</tr>";
+                        }
+                        else if(data.one_page_question[k].statu==1){
+                            str += "<a class='blue' href='#' onclick='deleteQuestionToPaper("+data.one_page_question[k].questionId+")'>" +
+                                "<i class='ace-icon glyphicon glyphicon-minus bigger-130'></i>" +
+                                "</a>" +
+                                "</div>" +
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                }
+                $("#question_tbody").html(str);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+
+    }
+
+    <!--试卷添加题目-->
+    function addQuestionToPaper(questionId) {
+        var paperId=$("#editQuestion_paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/addquestiontopaper",
+            dataType: 'json',
+            data: {"questionId": questionId,"paperId":paperId},
+            success: function (data) {
+                if(data==true)
+                    getBankQuestion();
+                else
+                    showError("添加题目失败");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--试卷删除题目-->
+    function deleteQuestionToPaper(questionId) {
+        var paperId=$("#editQuestion_paperId").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deletequestiontopaper",
+            dataType: 'json',
+            data: {"questionId": questionId,"paperId":paperId},
+            success: function (data) {
+                if(data==true)
+                    getBankQuestion();
+                else
+                    showError("移除题目失败");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--手动换页-->
+    function changePage() {
+        var newPageNum=$("#question_pageNum").val();
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var maxPageNum=$("#question_page_all_num").html();
+        if(!isNaN(newPageNum)){//是数字
+            if(Number(newPageNum)>Number(maxPageNum)||Number(newPageNum)<1)
+                $("#question_pageNum").val(oldPageNum);
+            else {
+                $("#question_pageNum").val(newPageNum);
+                $("#hidden_question_pageNum").val(newPageNum);
+                // getPaperContent();
+                if($("#show_mode").val()=="bank"){
+                    getBankQuestion();
+                }
+                else if($("#show_mode").val()=="paper"){
+                    getPaperContent();
+                }
+            }
+        }
+        else if(isNaN(newPageNum)) {//非数字
+            $("#question_pageNum").val(oldPageNum);
+        }
+    }
+
+    <!--到第一页-->
+    function gotoFirstPage() {
+        if($("#question_pageNum").val()>1) {
+            $("#question_pageNum").val('1');
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--上一页-->
+    function gotoPrePage() {
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var newPageNum=Number(oldPageNum)-1;
+        if(Number(oldPageNum)>1) {
+            $("#question_pageNum").val(newPageNum);
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--下一页-->
+    function gotoNextPage() {
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var maxPageNum=$("#question_page_all_num").html();
+        var newPageNum=Number(oldPageNum)+1;
+        if(Number(oldPageNum)+1<=Number(maxPageNum)) {
+            $("#question_pageNum").val(newPageNum);
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--到末页-->
+    function gotoLastPage() {
+        var maxPageNum=$("#question_page_all_num").html();
+        if($("#question_pageNum").val()<Number(maxPageNum)) {
+            $("#question_pageNum").val(maxPageNum);
+            if($("#show_mode").val()=="bank"){
+                getBankQuestion();
+            }
+            else if($("#show_mode").val()=="paper"){
+                getPaperContent();
+            }
+        }
+    }
+
+    <!--发布考试-->
+    function showReleaseExamModal(paperId) {
+        $("#release_paperId").val(paperId);
+
+        $('#release_exam_modal').modal('show');
+
+        $('#time').val(new Date().Format("yyyy-MM-dd hh:mm:ss"))
+    }
+
+    function releaseExam() {
+        // Check
+        var iptTime = $('#time')[0];
+        var iptDurTime = $('#duringTime')[0];
+        if(checkTimeWithNow(iptTime) + checkDuringTime(iptDurTime) != 2){
+            return false;
+        }
+
+        // Parse
+        var paperId=$("#release_paperId").val();
+        var paperStart = $('#time').val();
+        var endTimeStamp = $('#duringTime').val() * 60000 + (stringToDate(paperStart).getTime());
+        var paperEnd = new Date(endTimeStamp).Format('yyyy-MM-dd hh:mm:ss');
+
+        var paper_pageNum=$("#paper_pageNum").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/releasepaper",
+            dataType: 'json',
+            data: {"paperId": paperId,"paperStart":paperStart,"paperEnd":paperEnd},
+            success: function (data) {
+                if(data==true) {
+                    $('#release_exam_modal').modal('hide');
+                    getPaper($("#selected_group").val(),$("#paper_pageNum").val());
+                }
+                else
+                    showError("发布失败2");
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+
+    }
+
+    function showExamTimeModal(paperId) {
+
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpapertime",
+            dataType: 'json',
+            data: {"paperId":paperId},
+            success: function(data){
+                if(!data.hasOwnProperty("paperStart")&&!data.hasOwnProperty("paperEnd")){
+                    showError("获取失败");
+                }
+                else{
+                    $("#start_time").val(data.paperStart);
+                    $("#end_time").val(data.paperEnd);
+                    $("#show_examtime_modal").modal('show');
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+
+    }
+
+    function cancelRelease(paperId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/cancelrelease",
+            dataType: 'json',
+            data: {"paperId":paperId},
+            success: function(data){
+                if(data==true)
+                    getPaper($("#selected_group").val(),$("#paper_pageNum").val());
+                else
+                    showError("撤销失败");
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+</script>
+
+<!--DateTime Picker-->
+<script type="text/javascript" src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js"></script>
+<script src="datetimepicker/addon/jQuery-Timepicker-Addon/jquery-ui-timepicker-addon.js" type="text/javascript"></script>
+<!--中文-->
+<script src="datetimepicker/addon/js/jquery.ui.datepicker-zh-CN.js.js" type="text/javascript" charset="gb2312"></script>
+<script src="datetimepicker/addon/js/jquery-ui-timepicker-zh-CN.js" type="text/javascript"></script>
+<script type="text/javascript">
+    jQuery(function () {
+        // 时间设置
+        jQuery('#time').datetimepicker({
+            timeFormat: "HH:mm:ss",
+            dateFormat: "yy-mm-dd"
+        });
+    });
+    //
+    function stringToDate(str){
+        var tempStrs = str.split(" ");
+        var dateStrs = tempStrs[0].split("-");
+        var year = parseInt(dateStrs[0], 10);
+        var month = parseInt(dateStrs[1], 10) - 1;
+        var day = parseInt(dateStrs[2], 10);
+        var timeStrs = tempStrs[1].split(":");
+        var hour = parseInt(timeStrs [0], 10);
+        var minute = parseInt(timeStrs[1], 10);
+        var second = parseInt(timeStrs[2], 10);
+        var date = new Date(year, month, day, hour, minute, second);
+        return date;
+    }
+
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
+    function checkTimeWithNow(ipt){
+        var dateStr = $(ipt).val();
+        if(dateStr.length == 0){
+            $(ipt).parent().parent().find('.text-danger').text("不能为空！");
+            return false;
+        }
+
+        var date = stringToDate(dateStr);
+        var dateNow = new Date(Date.now());
+        if(date.getTime() < dateNow.getTime()){
+            $(ipt).parent().parent().find('.text-danger').text("时间过早！");
+            return false;
+        }else{
+            $(ipt).parent().parent().find('.text-danger').text("");
+            return true;
+        }
+    }
+
+    function checkDuringTime(ipt){
+        if($(ipt).val().length == 0){
+            $(ipt).parent().parent().find('.text-danger').text("不能为空！");
+            return false;
+        }else if((+$(ipt).val()) <= 0){
+            $(ipt).parent().parent().find('.text-danger').text("必须大于0！");
+            return false;
+        }else{
+            $(ipt).parent().parent().find('.text-danger').text("");
+            return true;
+        }
+    }
+
+</script>
+<style>
+    #ui-datepicker-div{
+        width: 250px!important;
+        padding: 18px;
+    }
+    .ui-slider-handle.ui-state-default{
+        height: 1em!important;
+        top:-.2em;
+        border-radius: .5em;
+    }
+    .ui-datepicker td>a.ui-state-active{
+        color: #333!important;
+    }
+</style>
+</body>
+</html>

@@ -2,6 +2,8 @@ package com.wwj.examonline.service;
 
 import com.wwj.examonline.entity.User;
 
+import java.util.List;
+
 public interface UserService {
 
     User login(String mail, String password);
@@ -16,6 +18,11 @@ public interface UserService {
 
     boolean editName(String name,int userid);
 
+    boolean editPicPath(String picpath,int userid);
+
     void sendMail(String sender,String receiver,String title,String text);
+
+    User getUser(String mail, String password);
+
 
 }

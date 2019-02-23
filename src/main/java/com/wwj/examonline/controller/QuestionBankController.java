@@ -1,5 +1,8 @@
 package com.wwj.examonline.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.wwj.examonline.entity.QuestionBank;
 import com.wwj.examonline.entity.User;
 import com.wwj.examonline.globle.Constants;
@@ -12,6 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -20,15 +27,28 @@ public class QuestionBankController {
     @Autowired
     private QuestionBankService questionBankServiceImpl;
 
-    @RequestMapping("/addquestionbank")
-    public String addQuestionBank(String bankname, HttpSession session, HttpServletRequest request){
+    @RequestMapping("/getquestionbank")
+    @ResponseBody
+    public String getQuestionBank(HttpSession session,String bankName,String addBankName,String editBankName){
         User u= (User) session.getAttribute(Constants.USER_KEY);
-        if(questionBankServiceImpl.addQuestionBank(u.getUserid(),bankname)){
-            request.setAttribute(Constants.ERROR_KEY,"添加成功");
+        ArrayList<QuestionBank> questionBanks=null;
+        String json_bank="{}";
+        if(bankName==""){
+            questionBanks= (ArrayList<QuestionBank>) questionBankServiceImpl.getQuestionBankByUsrId(u);
         }
-        else
-            request.setAttribute(Constants.ERROR_KEY,"添加失败");
-        return "addquestionbank";
+        else if(bankName!=""){
+            questionBanks=
+                    (ArrayList<QuestionBank>) questionBankServiceImpl.searchQuestionBank(bankName,u.getUserId());
+        }
+        json_bank= JSON.toJSONString(questionBanks);
+        return json_bank;
+    }
+
+    @RequestMapping("/addquestionbank")
+    @ResponseBody
+    public boolean addQuestionBank(String bankName,String search, HttpSession session){
+        User u= (User) session.getAttribute(Constants.USER_KEY);
+        return questionBankServiceImpl.addQuestionBank(u.getUserId(),bankName);
     }
 
     @RequestMapping("/checkbankname")
@@ -39,6 +59,29 @@ public class QuestionBankController {
             return false;
         else
             return true;
+    }
+
+    @RequestMapping("/deletequestionbank")
+    @ResponseBody
+    public boolean deleteQuestionBank(HttpSession session,int bankId,String search){
+        return questionBankServiceImpl.deleteQuestionBank(bankId);
+    }
+
+    @RequestMapping("/editquestionbank")
+    @ResponseBody
+    public boolean editQuestionBank(HttpSession session,int bankId,String bankName,String search){
+        return questionBankServiceImpl.editQuestionBankName(bankName,bankId);
+    }
+
+    @RequestMapping("/getallbank")
+    @ResponseBody
+    public String getAllBank(HttpSession session){
+        User user= (User) session.getAttribute(Constants.USER_KEY);
+        List<QuestionBank> questionBanks=questionBankServiceImpl.getAllQuestionBank(user.getUserId());
+        String json_bank= JSON.toJSONString(questionBanks);
+        log.info("当前对象所有题库");
+        log.info(json_bank);
+        return json_bank;
     }
 
 }

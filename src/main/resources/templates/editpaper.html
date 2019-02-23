@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>试卷设置</title>
+
+    <meta name="description" content="responsive photo gallery using colorbox" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+    <link rel="stylesheet" href="assets/css/colorbox.min.css" />
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="no-skin">
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <div class="navbar-container ace-save-state" id="navbar-container">
+        <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+            <span class="sr-only">Toggle sidebar</span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+        </button>
+        <div class="navbar-header pull-left">
+            <small class="navbar-brand">
+                <i class="fa fa-leaf"></i>
+                在线考试系统
+            </small>
+        </div>
+
+        <div class="navbar-buttons navbar-header pull-right" role="navigation">
+            <ul class="nav ace-nav">
+                <li class="light-blue dropdown-modal">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" height="40" width="40"
+                             th:src="${session.user.getPicPath()!=null}? (${session.user.getPicPath()}) : 'assets/images/myimages/user.jpg'"
+                             alt="头像"/>
+                        <span class="user-info">
+                                <small>欢迎登录</small>
+                                <span th:text="${session.user.getName()}" th:if="${session.user!=null}"></span>
+                        </span>
+
+                        <i class="ace-icon fa fa-caret-down"></i>
+                    </a>
+
+                    <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li>
+                            <a href="logout">
+                                <i class="ace-icon fa fa-power-off"></i>
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /.navbar-container -->
+</div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
+
+    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+        <script type="text/javascript">
+            try{ace.settings.loadState('sidebar')}catch(e){}
+        </script>
+
+        <ul class="nav nav-list">
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=index)}">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> 首页 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=questionbank)}">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> 题库管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="active">
+                <a href="#" th:href="@{/gotopage(pagename=papergroup)}">
+                    <i class="menu-icon fa fa-picture-o"></i>
+                    <span class="menu-text"> 试卷管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=markexam)}">
+                    <i class="menu-icon fa fa-pencil-square-o"></i>
+                    <span class="menu-text"> 试卷批阅 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=myexam)}">
+                    <i class="menu-icon fa fa-file-o"></i>
+                    <span class="menu-text"> 我的考试 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-tag"></i>
+                    <span class="menu-text"> 帐号管理 </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <b class="arrow"></b>
+
+                <ul class="submenu">
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editphoto)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改头像
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editname)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改姓名
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editmail)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改邮箱
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editpassword)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改密码
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                </ul>
+            </li>
+
+        </ul><!-- /.nav-list -->
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-content">
+            <div class="page-header">
+                <h1>试卷设置
+                    <small>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        <span th:text="${session.selected_group.getPaperGroupName()}"></span>
+                        <i class="ace-icon fa fa-angle-double-right"></i>
+                        <span th:text="${edit_paper.getPaperName()}"></span>
+                    </small>
+                </h1>
+            </div><!-- /.page-header -->
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <div class="widget-box">
+                        <div class="widget-header widget-header-blue widget-header-flat">
+                            <span th:if="${edit_paper.getPaperStart()==null}">
+                                <h4 class="widget-title lighter" id="edit_paper_err"></h4>
+                            </span>
+
+                            <span th:if="${edit_paper.getPaperStart()!=null}">
+                                <h4 class="widget-title lighter" id="edit_paper_err">已发布试卷不能修改</h4>
+                            </span>
+
+                        </div>
+
+
+                        <div class="widget-body">
+                            <div class="widget-main">
+                                <div id="fuelux-wizard-container" class="no-steps-container">
+                                    <div class="step-content pos-rel form-horizontal">
+                                        <input type="hidden" id="paperId" th:value="${edit_paper.getPaperId()}">
+                                        <div>
+                                            <h3 class="lighter block green">试卷名称</h3>
+                                            <div class="form-group">
+                                                <label for="editpaperName"
+                                                       class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">试卷名称:</label>
+                                                <div class="col-xs-12 col-sm-5">
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
+                                                        <input type="text" name="editpaperName" id="editpaperName"
+                                                               class="width-100" th:value="${edit_paper.getPaperName()}" onblur="editPaperNameBlur()">
+                                                    </span>
+
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()!=null}">
+                                                        <input type="text" name="editpaperName" id="editpaperName"
+                                                               class="width-100" th:value="${edit_paper.getPaperName()}" onblur="editPaperNameBlur()" disabled>
+                                                    </span>
+
+                                                </div>
+                                                <div class="help-block col-xs-12 col-sm-reset inline">
+                                                    <span id="editPaperName_err"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 class="lighter block green">分数设置(最小分数单位0.5)</h3>
+                                            <div class="form-group">
+                                                <label for="oneOptionMark"
+                                                       class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">单选题每题分数:</label>
+                                                <div class="col-xs-12 col-sm-5">
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
+                                                        <input type="text" name="oneOptionMark" id="oneOptionMark"
+                                                               class="width-100" th:value="${edit_paper.getOneOptionMark()}" onblur="oneOptionMarkBlur()">
+                                                    </span>
+
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()!=null}">
+                                                        <input type="text" name="oneOptionMark" id="oneOptionMark"
+                                                               class="width-100" th:value="${edit_paper.getOneOptionMark()}" onblur="oneOptionMarkBlur()" disabled>
+                                                    </span>
+
+                                                </div>
+                                                <div class="help-block col-xs-12 col-sm-reset inline">
+                                                    <span id="oneOptionMark_err"></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="moreOptionMark"
+                                                       class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">多选题每题分数:</label>
+                                                <div class="col-xs-12 col-sm-5">
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
+                                                        <input type="text" name="moreOptionMark" id="moreOptionMark"
+                                                               class="width-100" th:value="${edit_paper.getMoreOptionMark()}" onblur="moreOptionMarkBlur()">
+                                                    </span>
+
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()!=null}">
+                                                        <input type="text" name="moreOptionMark" id="moreOptionMark"
+                                                               class="width-100" th:value="${edit_paper.getMoreOptionMark()}" onblur="moreOptionMarkBlur()" disabled>
+                                                    </span>
+
+                                                </div>
+                                                <div class="help-block col-xs-12 col-sm-reset inline">
+                                                    <span id="moreOptionMark_err"></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="trueOrFalseMark"
+                                                       class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">判断题每题分数:</label>
+                                                <div class="col-xs-12 col-sm-5">
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
+                                                        <input type="text" name="trueOrFalseMark" id="trueOrFalseMark"
+                                                               class="width-100" th:value="${edit_paper.getTrueOrFalseMark()}" onblur="trueOrFalseMarkBlur()">
+                                                    </span>
+
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()!=null}">
+                                                        <input type="text" name="trueOrFalseMark" id="trueOrFalseMark"
+                                                               class="width-100" th:value="${edit_paper.getTrueOrFalseMark()}" onblur="trueOrFalseMarkBlur()" disabled>
+                                                    </span>
+
+                                                </div>
+                                                <div class="help-block col-xs-12 col-sm-reset inline">
+                                                    <span id="trueOrFalseMark_err"></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="fillInBlankMark"
+                                                       class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">填空题每空分数:</label>
+                                                <div class="col-xs-12 col-sm-5">
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
+                                                        <input type="text" name="fillInBlankMark" id="fillInBlankMark"
+                                                               class="width-100" th:value="${edit_paper.getFillInBlankMark()}" onblur="fillInBlankMarkBlur()">
+                                                    </span>
+
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()!=null}">
+                                                        <input type="text" name="fillInBlankMark" id="fillInBlankMark"
+                                                               class="width-100" th:value="${edit_paper.getFillInBlankMark()}" onblur="fillInBlankMarkBlur()" disabled>
+                                                    </span>
+
+                                                </div>
+                                                <div class="help-block col-xs-12 col-sm-reset inline">
+                                                    <span id="fillInBlankMark_err"></span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="shortAnswerQuestionMark"
+                                                       class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">简答题每题分数:</label>
+                                                <div class="col-xs-12 col-sm-5">
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
+                                                        <input type="text" name="shortAnswerQuestionMark" id="shortAnswerQuestionMark"
+                                                               class="width-100" th:value="${edit_paper.getShortAnswerQuestionMark()}"  onblur="shortAnswerQuestionMarkBlur()">
+                                                    </span>
+
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()!=null}">
+                                                        <input type="text" name="shortAnswerQuestionMark" id="shortAnswerQuestionMark"
+                                                               class="width-100" th:value="${edit_paper.getShortAnswerQuestionMark()}"  onblur="shortAnswerQuestionMarkBlur()" disabled>
+                                                    </span>
+
+                                                </div>
+                                                <div class="help-block col-xs-12 col-sm-reset inline">
+                                                    <span id="shortAnswerQuestionMark_err"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div>
+                                            <h3 class="lighter block green">自动批改设置</h3>
+                                            <div class="form-group">
+                                                <label class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right"></label>
+                                                <div class="col-xs-12 col-sm-9">
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
+                                                        <input type="checkbox" name="oneOptionCheck" id="oneOptionCheck" checked="checked"
+                                                               th:if="${edit_paper.getOneOptionCheck()==1}">
+                                                        <input type="checkbox" name="oneOptionCheck" id="oneOptionCheck"
+                                                               th:if="${edit_paper.getOneOptionCheck()==0}">
+                                                        <label for="oneOptionCheck">单选题</label>
+
+                                                        <input type="checkbox" name="moreOptionCheck" id="moreOptionCheck" checked="checked"
+                                                               th:if="${edit_paper.getMoreOptionCheck()==1}">
+                                                        <input type="checkbox" name="moreOptionCheck" id="moreOptionCheck"
+                                                               th:if="${edit_paper.getMoreOptionCheck()==0}">
+                                                        <label for="moreOptionCheck">多选题</label>
+
+                                                        <input type="checkbox" name="trueOrFalseCheck" id="trueOrFalseCheck" checked="checked"
+                                                               th:if="${edit_paper.getTrueOrFalseCheck()==1}">
+                                                        <input type="checkbox" name="trueOrFalseCheck" id="trueOrFalseCheck"
+                                                               th:if="${edit_paper.getTrueOrFalseCheck()==0}">
+                                                        <label for="trueOrFalseCheck">判断题</label>
+
+                                                        <input type="checkbox" name="fillInBlankCheck" id="fillInBlankCheck" checked="checked"
+                                                               th:if="${edit_paper.getFillInBlankCheck()==1}">
+                                                        <input type="checkbox" name="fillInBlankCheck" id="fillInBlankCheck"
+                                                               th:if="${edit_paper.getFillInBlankCheck()==0}">
+                                                        <label for="fillInBlankCheck">填空题</label>
+                                                    </span>
+
+                                                    <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()!=null}">
+                                                        <input type="checkbox" name="oneOptionCheck" id="oneOptionCheck" checked="checked"
+                                                               disabled th:if="${edit_paper.getOneOptionCheck()==1}">
+                                                        <input type="checkbox" name="oneOptionCheck" id="oneOptionCheck"
+                                                               disabled th:if="${edit_paper.getOneOptionCheck()==0}">
+                                                        <label for="oneOptionCheck">单选题</label>
+
+                                                        <input type="checkbox" name="moreOptionCheck" id="moreOptionCheck" checked="checked"
+                                                               disabled th:if="${edit_paper.getMoreOptionCheck()==1}">
+                                                        <input type="checkbox" name="moreOptionCheck" id="moreOptionCheck"
+                                                               disabled th:if="${edit_paper.getMoreOptionCheck()==0}">
+                                                        <label for="moreOptionCheck">多选题</label>
+
+                                                        <input type="checkbox" name="trueOrFalseCheck" id="trueOrFalseCheck" checked="checked"
+                                                               disabled th:if="${edit_paper.getTrueOrFalseCheck()==1}">
+                                                        <input type="checkbox" name="trueOrFalseCheck" id="trueOrFalseCheck"
+                                                               disabled th:if="${edit_paper.getTrueOrFalseCheck()==0}">
+                                                        <label for="trueOrFalseCheck">判断题</label>
+
+                                                        <input type="checkbox" name="fillInBlankCheck" id="fillInBlankCheck" checked="checked"
+                                                               disabled th:if="${edit_paper.getFillInBlankCheck()==1}">
+                                                        <input type="checkbox" name="fillInBlankCheck" id="fillInBlankCheck"
+                                                               disabled th:if="${edit_paper.getFillInBlankCheck()==0}">
+                                                        <label for="fillInBlankCheck">填空题</label>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <hr>
+                                        <div class="wizard-actions">
+                                            <span th:if="${edit_paper.getPaperStart()==null}">
+                                                <button class="btn btn-success btn-next" data-last="Finish"
+                                                        id="edit_paper_btn" type="button" onclick="editPaperSubmit()">确定</button>
+                                            </span>
+                                            <span th:if="${edit_paper.getPaperStart()!=null}">
+                                                <button class="btn btn-success btn-next" data-last="Finish"
+                                                        id="edit_paper_btn" type="button" disabled>确定</button>
+                                            </span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /.widget-main -->
+                        </div><!-- /.widget-body -->
+                    </div>
+
+                    <!-- PAGE CONTENT ENDS -->
+
+                </div>
+                <!-- PAGE CONTENT ENDS -->
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.page-content -->
+</div><!-- /.main-content -->
+
+<div class="footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+						<span class="bigger-120">
+							<span class="blue bolder">在线考试系统</span>
+							王文杰 &copy; 2018
+						</span>
+        </div>
+    </div>
+</div>
+
+</div><!-- /.main-container -->
+
+<!-- basic scripts -->
+<!-- basic scripts -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<!--[if !IE]> -->
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+    $(document).ready(function(){
+
+    })
+
+    function editPaperNameBlur() {
+        var paperName=$("#editpaperName").val();
+        flag=false;
+        if(paperName==""){
+            $("#editPaperName_err").html("<font color='red'>"+"试卷名不能为空"+"</font>");
+            flag=false;
+        }
+        else if(paperName.length>8) {
+            $("#editPaperName_err").html("<font color='red'>" + "试卷名不能超过8个字符" + "</font>");
+            flag=false;
+        }
+        else {
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkpapername",
+                dataType: 'json',
+                data: {"paperName": paperName},
+                success: function (data) {
+                    if (data == false)
+                        $("#editPaperName_err").html("<font color='red'>" + "试卷已存在" + "</font>");
+                    else
+                        $("#editPaperName_err").empty();
+                    flag = data;
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+
+    function oneOptionMarkBlur() {
+        var mark=$("#oneOptionMark").val();
+        var errId="oneOptionMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function moreOptionMarkBlur() {
+        var mark=$("#moreOptionMark").val();
+        var errId="moreOptionMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function trueOrFalseMarkBlur() {
+        var mark=$("#trueOrFalseMark").val();
+        var errId="trueOrFalseMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function fillInBlankMarkBlur() {
+        var mark=$("#fillInBlankMark").val();
+        var errId="fillInBlankMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function shortAnswerQuestionMarkBlur() {
+        var mark=$("#shortAnswerQuestionMark").val();
+        var errId="shortAnswerQuestionMark_err";
+        return checkMark(mark,errId);
+    }
+
+    function checkMark(mark,errId) {
+        var err="#"+errId;
+        var flag=false;
+        if(mark==""){
+            $(err).html("<font color='red'>" + "分数不能为空" + "</font>");
+            flag=false;
+        }
+        else {
+            if(!isNaN(mark)){
+                if(mark%0.5!=0||mark<0.5){
+                    $(err).html("<font color='red'>" + "分数最小单位为0.5" + "</font>");
+                    flag=false;
+                }
+                else {
+                    $(err).empty();
+                    flag=true;
+                }
+            }else{
+                $(err).html("<font color='red'>" + "存在非数字" + "</font>");
+                flag=false;
+            }
+        }
+        return flag;
+    }
+
+    function editPaperSubmit() {
+        flag=true;
+        var paperId=$("#paperId").val();
+        var paperName=$("#editpaperName").val();
+        var oneOptionMark=$("#oneOptionMark").val();
+        var moreOptionMark=$("#moreOptionMark").val();
+        var trueOrFalseMark=$("#trueOrFalseMark").val();
+        var fillInBlankMark=$("#fillInBlankMark").val();
+        var shortAnswerQuestionMark=$("#shortAnswerQuestionMark").val();
+        var oneOptionCheck=$("#oneOptionCheck").is(':checked');
+        var moreOptionCheck=$("#moreOptionCheck").is(':checked');
+        var trueOrFalseCheck=$("#trueOrFalseCheck").is(':checked');
+        var fillInBlankCheck=$("#fillInBlankCheck").is(':checked');
+        if(!oneOptionMarkBlur())
+            flag=false;
+        if(!moreOptionMarkBlur())
+            flag=false;
+        if(!trueOrFalseMarkBlur())
+            flag=false;
+        if(!fillInBlankMarkBlur())
+            flag=false;
+        if(!shortAnswerQuestionMarkBlur())
+            flag=false;
+        if(!editPaperNameBlur())
+            flag=false;
+        if(flag==true){
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/settingpaper",
+                dataType: 'json',
+                data: {"paperName":paperName,"oneOptionMark": oneOptionMark,"moreOptionMark":moreOptionMark
+                    ,"trueOrFalseMark":trueOrFalseMark, "fillInBlankMark":fillInBlankMark
+                    ,"shortAnswerQuestionMark":shortAnswerQuestionMark,"oneOptionCheck":oneOptionCheck
+                    , "moreOptionCheck":moreOptionCheck,"trueOrFalseCheck":trueOrFalseCheck
+                    ,"fillInBlankCheck":fillInBlankCheck, "paperId":paperId},
+                success: function (data) {
+                    if (data == true)
+                        $("#edit_paper_err").html("试卷修改成功");
+                    else
+                        $("#edit_paper_err").html("试卷修改失败");
+                },
+                error: function (e) {
+                    alert("error");
+                }
+            })
+        }
+    }
+
+
+</script>
+
+</body>
+</html>

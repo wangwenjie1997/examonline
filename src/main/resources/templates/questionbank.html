@@ -1,29 +1,1110 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
     <title>题库管理</title>
-    <script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
-</head>
-<body>
-    <form action="searchquestionbank">
-        <input type="text" name="search" id="search" />
-        <input type="button" value="搜索" id="search_submit" onclick="checkSearch()" />
-    </form>
-    <div th:if="${exercisers != null}">
-        <table>
-            <tr>
-                <th>题库名字</th>
-                <th>操作</th>
-            </tr>
-            <tr th:each="bank : ${banks}">
-                <td th:text="${bank.name}">Onions</td>
-                <a href="#" th:value="${bank.name}"></a>
-            </tr>
-        </table>
-    </div>
-    <div th:if="${exercisers != null}">
 
+    <meta name="description" content="Draggabble Widget Boxes with Persistent Position and State" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+    <link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css" />
+
+    <!-- text fonts -->
+    <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-part2.min.css" class="ace-main-stylesheet" />
+    <![endif]-->
+    <link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- ace settings handler -->
+    <script src="assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+
+    <!--[if lte IE 8]>
+    <script src="assets/js/html5shiv.min.js"></script>
+    <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="no-skin">
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <div class="navbar-container ace-save-state" id="navbar-container">
+        <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+            <span class="sr-only">Toggle sidebar</span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+
+            <span class="icon-bar"></span>
+        </button>
+        <div class="navbar-header pull-left">
+            <small class="navbar-brand">
+                <i class="fa fa-leaf"></i>
+                在线考试系统
+            </small>
+        </div>
+
+        <div class="navbar-buttons navbar-header pull-right" role="navigation">
+            <ul class="nav ace-nav">
+                <li class="light-blue dropdown-modal">
+                    <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                        <img class="nav-user-photo" height="40" width="40"
+                             th:src="${session.user.getPicPath()!=null}? (${session.user.getPicPath()}) : 'assets/images/myimages/user.jpg'"
+                             alt="头像"/>
+                        <span class="user-info">
+                                <small>欢迎登录</small>
+                                <span th:text="${session.user.getName()}" th:if="${session.user!=null}"></span>
+                        </span>
+
+                        <i class="ace-icon fa fa-caret-down"></i>
+                    </a>
+
+                    <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li>
+                            <a href="logout">
+                                <i class="ace-icon fa fa-power-off"></i>
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /.navbar-container -->
+</div>
+
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
+
+    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+        <script type="text/javascript">
+            try{ace.settings.loadState('sidebar')}catch(e){}
+        </script>
+
+        <ul class="nav nav-list">
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=index)}">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> 首页 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="active">
+                <a href="#" th:href="@{/gotopage(pagename=questionbank)}">
+                    <i class="menu-icon fa fa-list-alt"></i>
+                    <span class="menu-text"> 题库管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+
+            <li class="">
+                <a href="#" th:href="@{/gotopage(pagename=papergroup)}">
+                    <i class="menu-icon fa fa-picture-o"></i>
+                    <span class="menu-text"> 试卷管理 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=markexam)}">
+                    <i class="menu-icon fa fa-pencil-square-o"></i>
+                    <span class="menu-text"> 试卷批阅 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li>
+                <a href="#" th:href="@{/gotopage(pagename=myexam)}">
+                    <i class="menu-icon fa fa-file-o"></i>
+                    <span class="menu-text"> 我的考试 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
+                <a href="#" class="dropdown-toggle">
+                    <i class="menu-icon fa fa-tag"></i>
+                    <span class="menu-text"> 帐号管理 </span>
+
+                    <b class="arrow fa fa-angle-down"></b>
+                </a>
+
+                <b class="arrow"></b>
+
+                <ul class="submenu">
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editphoto)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改头像
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editname)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改姓名
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editmail)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改邮箱
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                    <li class="">
+                        <a href="#" th:href="@{/gotopage(pagename=editpassword)}">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            修改密码
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
+
+                </ul>
+            </li>
+
+        </ul><!-- /.nav-list -->
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+        </div>
     </div>
+
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>题库管理 </h1>
+                </div><!-- /.page-header -->
+
+                <div class="row">
+                    <input type="hidden" id="err_msg" th:value="${err_msg}" />
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <div>
+                            <div class="row search-page" id="search-page-1">
+                                <div class="col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="search-area well well-sm">
+                                                <div class="search-filter-header bg-primary">
+                                                    <h5 class="smaller no-margin-bottom">
+                                                        <i class="ace-icon fa fa-sliders light-green bigger-130"></i>&nbsp; 题库列表
+                                                    </h5>
+                                                </div>
+
+                                                <div class="space-10"></div>
+
+                                                <button class="btn btn-sm btn-block" onclick="checkAdd()">新建题库</button>
+
+                                                <div class="space-10"></div>
+
+
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-11 col-md-10">
+                                                        <div class="input-group">
+                                                            <input type="hidden" id="hidden_search_bank" th:value="${search_bank_content}">
+                                                            <input type="text" class="form-control" id="search_bank_content" name="search_content" placeholder="搜索题库">
+                                                            <div class="input-group-btn">
+                                                                <button type="button" class="btn btn-default no-border btn-sm" id="search_bank_btn" onclick="searchQuestionBank()">
+                                                                    <i class="ace-icon fa fa-search icon-on-right bigger-110"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-default no-border btn-sm" id="search_bank_return_btn" onclick="searchBankReturn()">
+                                                                    <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="hr hr-dotted"></div>
+
+                                                <div class="pre-scrollable" id="list_banks"></div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-12 col-sm-9">
+                                            <div class="row">
+                                                <div>
+                                                    <div id="dynamic-table_wrapper" class="dataTables_wrapper form-inline no-footer">
+                                                        <div class="row">
+                                                            <div class="col-xs-6"><div class="dataTables_length" id="dynamic-table_length">
+                                                                <form method="post" action="#" th:action="@{/gotoaddquestionpage}">
+                                                                    <!--存在选中题库-->
+                                                                    <input type="text" name="selectbank" id="selected_bank" th:value="${session.selected_bank.getBankId()}" th:if="${session.selected_bank!=null}">
+                                                                    <!--不存在选中题库-->
+                                                                    <input type="text" name="selectbank" id="selected_bank" value="" th:if="${session.selected_bank==null}">
+                                                                    <input type="hidden" name="selectedkind" value="-1">
+                                                                    <button type="button" id="add_question_page_btn" onclick="addQuestionPage()">添加题目</button>
+                                                                </form>
+
+                                                                <!--每页显示个数-->
+                                                                <!--<label>显示-->
+                                                                    <!--<select name="dynamic-table_length" aria-controls="dynamic-table" class="form-control input-sm">-->
+                                                                        <!--<option value="10">10</option><option value="25">25</option>-->
+                                                                        <!--<option value="50">50</option><option value="100">100</option>-->
+                                                                    <!--</select> 条记录-->
+                                                                <!--</label>-->
+                                                            </div>
+                                                            </div>
+                                                            <div class="col-xs-6">
+                                                                <div id="dynamic-table_filter" class="dataTables_filter">
+                                                                    <label>
+                                                                        <input type="hidden" id="hidden_search_question_content">
+                                                                        <input type="search" id="search_question_content" class="form-control input-sm" placeholder="搜索题目" aria-controls="dynamic-table">
+
+                                                                        <button type="button" id="search_question_btn" class="btn btn-mini no-border btn-info2" onclick="searchQuestion()">
+                                                                            <i class="ace-icon fa fa-search icon-only bigger-110"></i>
+                                                                        </button>
+                                                                        <button type="button" id="search_question_return_btn" class="btn btn-mini no-border btn-info2" onclick="searchQuestionReturn()">
+                                                                            <i class="ace-icon fa fa-reply light-green bigger-110"></i>
+                                                                        </button>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <table id="dynamic-table" class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th class="center" rowspan="1" colspan="1" aria-label="">
+                                                                编号
+                                                            </th>
+                                                            <th  class="hidden-600" tabindex="0" aria-controls="dynamic-table" rowspan="1" colspan="1" >
+                                                                题目内容
+                                                            </th>
+                                                            <th tabindex="0" aria-controls="dynamic-table" rowspan="1" colspan="1">
+                                                                题型
+                                                            </th>
+                                                            <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="">操作</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                        <tbody id="question_tbody">
+
+                                                        </tbody>
+                                                    </table>
+                                                        <div class="row">
+                                                            <div class="message-footer clearfix">
+                                                                <div class="pull-left" id="all_question_num"></div>
+
+                                                                <div class="pull-right">
+                                                                    <div class="inline middle" >
+                                                                        共<span id="question_page_all_num"></span>页
+                                                                    </div>
+
+                                                                    &nbsp; &nbsp;
+                                                                    <ul class="pagination middle">
+                                                                        <li>
+                                                                            <a href="#" onclick="gotoFirstPage()">
+																			    <i class="ace-icon fa fa-step-backward middle"></i>
+																		    </a>
+                                                                        </li>
+
+                                                                        <li>
+                                                                            <a href="#" onclick="gotoPrePage()">
+																			    <i class="ace-icon fa fa-caret-left bigger-140 middle"></i>
+																		    </a>
+                                                                        </li>
+
+                                                                        <li>
+                                                                            <span th:if="${session.question_pageNum!=null}">
+                                                                                <input type="hidden" id="hidden_question_pageNum" th:value="${session.question_pageNum}">
+                                                                                <input maxlength="3" type="text" id="question_pageNum" onblur="changePage()" th:value="${session.question_pageNum}">
+                                                                            </span>
+                                                                            <span th:if="${session.question_pageNum==null}">
+                                                                                <input type="hidden" id="hidden_question_pageNum">
+                                                                                <input maxlength="3" type="text" id="question_pageNum" onblur="changePage()" value="1">
+                                                                            </span>
+                                                                        </li>
+
+                                                                        <li>
+                                                                            <a href="#" onclick="gotoNextPage()">
+                                                                                <i class="ace-icon fa fa-caret-right bigger-140 middle"></i>
+                                                                            </a>
+                                                                        </li>
+
+                                                                        <li>
+                                                                            <a href="#" onclick="gotoLastPage()">
+                                                                                <i class="ace-icon fa fa-step-forward middle"></i>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+
+    <div class="footer">
+        <div class="footer-inner">
+            <div class="footer-content">
+						<span class="bigger-120">
+							<span class="blue bolder">在线考试系统</span>
+							王文杰 &copy; 2018
+						</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误弹窗 -->
+    <div class="modal fade" id="error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        错误信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <span id="span_error" th:text="${err_msg}"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 添加题库弹窗 -->
+    <div class="modal fade" id="add_question_bank" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        添加题库
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <label for="add_bankname">题库名称:</label>
+                    <input type="text" name="add_bankname" id="add_bankname"/>
+                    <span id="add_bankname_err"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="add_bank_btn">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--删除题库弹窗-->
+    <div class="modal fade" id="delete_question_bank" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        删除题库
+                    </h4>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="delete_question_bank_id" />
+                    选择的题库被删除，该题库内的试题将会被同步删除。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="deleteQuestionBank()">
+                        确定
+                    </button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!-- 修改题库弹窗 -->
+    <div class="modal fade" id="edit_question_bank" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        修改题库
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit_question_bank_id" />
+                    <input type="hidden" id="old_bank_name" />
+                    <label for="edit_bankname">题库名称:</label>
+                    <input type="text" name="edit_bankname" id="edit_bankname"/>
+                    <span id="edit_bankname_err"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="editbank_btn">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <!--显示题目-->
+    <div class="modal fade" id="show_question" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        查看题目
+                    </h4>
+                </div>
+                <div class="modal-body pre-scrollable">
+                    <div id="modal_question_kind"></div>
+                    <div id="modal_question_content"></div>
+                    <div id="modal_optionA"></div>
+                    <div id="modal_optionB"></div>
+                    <div id="modal_optionC"></div>
+                    <div id="modal_optionD"></div>
+                    <div id="modal_answer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+</div><!-- /.main-container -->
+
+<!-- basic scripts -->
+<!-- basic scripts -->
+<script th:src="@{/webjars/jquery/3.3.1/jquery.min.js}"></script>
+<!--[if !IE]> -->
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+
+<!-- inline scripts related to this page -->
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        <!--初始化-->
+        initPage();
+
+        <!--添加题库-->
+        checkAddBlur();
+        checkAddSubmit();
+
+        <!--编辑题库-->
+        checkEditBlur();
+        checkEditSubmit();
+
+        <!--搜索初始化-->
+        clearBankSearch();
+        clearQuestionSearch();
+
+        <!--错误信息弹窗-->
+        showError();
+    });
+
+
+
+    function showError() {
+        if($("#span_error").html()!=""){
+            $('#error').modal('show')
+        }
+    }
+
+    function initPage() {
+        //*返回功能:题库搜索内容，题目搜索内容，当前选中题库，当前题目页数*
+        getQuestionBank();
+    }
+
+    <!--加载题库-->
+    function getQuestionBank(){
+
+        var search=$("#hidden_search_bank").val();
+        var addBankName=$('#add_bankname').val();
+        var editBankName=$('#edit_bankname').val();
+        if(search!=""){
+            $("#search_bank_return_btn").show();
+            // $("#hidden_search_bank").val(search);
+        }
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getquestionbank",
+            dataType: 'json',
+            data: {"bankName":search,"addBankName":addBankName,"editBankName":editBankName},
+            success: function(data){
+                var str="";
+                if(data==""){
+                    str="<span>没有题库</span>"
+                }
+                else{
+                    str="<ul class='list-group'>";
+                    if($("#selected_bank").val()==""||search!="")
+                        $("#selected_bank").val(data[0].bankId);
+                    for(var k in data){
+                        if(addBankName!=""&&addBankName==data[k].bankName)//添加题库
+                            $("#selected_bank").val(data[k].bankId);
+                        else if(editBankName!=""&&editBankName==data[k].bankName)//重命名题库
+                            $("#selected_bank").val(data[k].bankId);
+                        str+="<li class='list-group-item' id='"+data[k].bankId+"'>" +
+                            "<div><span><a onclick="+"'getQuestion("+data[k].bankId+",1)'>"+data[k].bankName+"</a></span>" +
+                            "<div class='pull-right action-buttons'><a class='green' href='#' onclick=checkEdit("+data[k].bankId+",'"+data[k].bankName+"')>" +
+                            "<i class='ace-icon fa fa-pencil bigger-130'></i>" +
+                            "</a>" +
+                            "<a class='red' href='#' onclick='checkDelete("+data[k].bankId+")'>" +
+                            "<i class='ace-icon fa fa-trash-o bigger-130'></i>" +
+                            "</a></div></div>" +
+                            "</li>"
+                    }
+                    str+="</ul>"
+                }
+                $("#list_banks").html(str);
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+        getQuestion($("#selected_bank").val(),$("#question_pageNum").val());
+    }
+
+    <!--搜索题库-->
+    function searchQuestionBank() {
+        $("#hidden_search_bank").val($("#search_bank_content").val());
+        getQuestionBank();
+    }
+
+    <!--取消搜索题库-->
+    function searchBankReturn() {
+        clearBankSearch();
+        getQuestionBank();
+    }
+
+    function clearBankSearch() {
+        $("#search_bank_content").val("");
+        $("#hidden_search_bank").val("");
+        $("#search_bank_return_btn").hide();
+    }
+
+    <!--加载题目-->
+    function getQuestion(bankId,pageNum) {
+        //题库的选中状态
+        var oldBankId=$("#selected_bank").val();
+        var getOldBank="#"+oldBankId;
+        $(getOldBank).removeClass('active')
+        $("#selected_bank").val(bankId);
+        $("#"+bankId).addClass('active');
+
+        //加载题目
+        var search=$("#hidden_search_question_content").val();
+        if(search!=""){
+            $("#search_question_return_btn").show();
+            // $("#hidden_search_question_content").val(search);
+        }
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getquestion",
+            dataType: 'json',
+            data: {"bankId":bankId,"pageNum":pageNum,"onePageNum":10,"search":search},
+            success: function(data){
+                $("#all_question_num").html("共有"+data.all_question_num+"条记录");
+                $("#question_page_all_num").html(data.question_page_all_num);
+                $("#question_pageNum").val(data.question_pageNum);
+                $("#hidden_question_pageNum").val(data.question_pageNum);
+                <!--加载题目-->
+                var str="";
+                if(data.one_page_question!="{}"){
+                    for(var k in data.one_page_question){
+                        var count=Number(k)+1;
+                        str+="<tr role='row' class='even'>" +
+                            " <td class='text-center'>"+count+"</td>" +
+                            "<td><a href='#' onclick='showQuestion("+data.one_page_question[k].questionId+")'>"+data.one_page_question[k].questionContent+"</a></td>" +
+                            "<td>"+data.one_page_question[k].questionKind.kindName+"</td>" +
+                            "<td>" +
+                            "<div class='hidden-sm hidden-xs action-buttons'>" +
+                            "<a class='blue' href='#' onclick='showQuestion("+data.one_page_question[k].questionId+")'>" +
+                            "<i class='ace-icon fa fa-search-plus bigger-130'></i>" +
+                            "</a>" +
+                            "<a class='blue' href='gotoeditquestionpage?questionId="+data.one_page_question[k].questionId+"'>" +
+                            "<i class='ace-icon fa fa-pencil bigger-130'></i>" +
+                            "</a>" +
+                            "<a class='red' href='#' onclick='deleteQuestion("+data.one_page_question[k].questionId+")'>" +
+                            "<i class='ace-icon fa fa-trash-o bigger-130'></i>" +
+                            "</a>" +
+                            "</div>" +
+                            "</td>" +
+                            "</tr>"
+                    }
+                }
+                $("#question_tbody").html(str);
+                <!--加载题目-->
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+
+    }
+    
+    <!--搜索题目-->
+    function searchQuestion() {
+        $("#hidden_search_question_content").val($("#search_question_content").val());
+        getQuestion($("#selected_bank").val(),1);
+    }
+
+    <!--取消搜索题目-->
+    function searchQuestionReturn() {
+        clearQuestionSearch();
+        getQuestion($("#selected_bank").val(),1);
+    }
+
+    function clearQuestionSearch() {
+        $("#search_question_content").val("");
+        $("#hidden_search_question_content").val("");
+        $("#search_question_return_btn").hide();
+    }
+
+    <!--添加题库-->
+    <!--弹出添加弹窗-->
+    function checkAdd(){
+        //清空题库重命名弹窗
+        $("#edit_question_bank_id").val("");
+        $("#edit_bankname").val("");
+        $("#old_bank_name").val("");
+        $("#edit_bankname_err").empty();
+
+        $('#add_bankname').val("");
+        $('#add_bankname_err').empty();
+        $('#add_question_bank').modal('show');
+    }
+
+    function checkAddBankName() {
+        var bankname=$('#add_bankname').val();
+        var flag=false;
+        if(bankname==""){
+            $("#add_bankname_err").html("<font color='red'>"+"题库名不能为空"+"</font>");
+            flag=false;
+        }
+        else if(bankname.length>8){
+            $("#add_bankname_err").html("<font color='red'>"+"题库名不能超过8个字符"+"</font>");
+            flag=false;
+        }
+        else{
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkbankname",
+                dataType: 'json',
+                data: {"bankname":bankname},
+                success: function(data){
+                    if(data==false)
+                        $("#add_bankname_err").html("<font color='red'>"+"题库已存在"+"</font>");
+                    else
+                        $("#add_bankname_err").empty();
+                    flag=data;
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+
+    function checkAddBlur() {
+        $('#add_bankname').blur(function(){
+            checkAddBankName();
+        });
+    }
+
+    function checkAddSubmit() {
+        $("#add_bank_btn").click(function(){
+            if(checkAddBankName()){
+                addQuestionBank();
+            }
+        });
+    }
+
+    function addQuestionBank() {
+        var search=$("#hidden_search_bank").val();
+        $('#add_question_bank').modal('hide');
+        var bankName=$('#add_bankname').val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/addquestionbank",
+            dataType: 'json',
+            data: {"bankName":bankName,"search":search},
+            success: function(data){
+                if(data==true){
+                    initPage();
+                }
+                else{
+                    alert("题库添加失败");
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--删除题库-->
+    <!--弹出删除弹窗-->
+    function checkDelete(bankId) {
+        $("#delete_question_bank_id").val(bankId);
+        $('#delete_question_bank').modal('show')
+    }
+
+    function deleteQuestionBank(){
+        var search=$("#hidden_search_bank").val();
+        $('#delete_question_bank').modal('hide');
+        var bankId=$("#delete_question_bank_id").val();
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deletequestionbank",
+            dataType: 'json',
+            data: {"bankId":bankId,"search":search},
+            success: function(data){
+                if(data==true){
+                    initPage();
+                }
+                else{
+                    alert("题库删除失败");
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--重命名题库-->
+    <!--弹出重命名弹窗-->
+    function checkEdit(bankId,bankName) {
+        //清空添加题库弹窗
+        $('#add_bankname').val("");
+        $('#add_bankname_err').empty();
+
+        $("#edit_question_bank_id").val(bankId);
+        $("#edit_bankname").val(bankName);
+        $("#old_bank_name").val(bankName);
+        $("#edit_bankname_err").empty();
+        $('#edit_question_bank').modal('show');
+    }
+
+    function checkEditBankName() {
+        var bankname=$('#edit_bankname').val();
+        var oldbankname=$("#old_bank_name").val();
+        var flag=false;
+        if(bankname==""){
+            $("#edit_bankname_err").html("<font color='red'>"+"题库名不能为空"+"</font>");
+            flag=false;
+        }
+        else if(bankname.length>8){
+            $("#edit_bankname_err").html("<font color='red'>"+"题库名不能超过8个字符"+"</font>");
+            flag=false;
+        }
+        else if(bankname==oldbankname){
+            flag=true;
+        }
+        else{
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: "/checkbankname",
+                dataType: 'json',
+                data: {"bankname":bankname},
+                success: function(data){
+                    if(data==false)
+                        $("#edit_bankname_err").html("<font color='red'>"+"题库已存在"+"</font>");
+                    else
+                        $("#edit_bankname_err").empty();
+                    flag=data;
+                },
+                error: function(e){
+                    alert("error");
+                }
+            })
+        }
+        return flag;
+    }
+
+    function checkEditBlur() {
+        $('#edit_bankname').blur(function(){
+            checkEditBankName();
+        });
+    }
+
+    function checkEditSubmit() {
+        $("#editbank_btn").click(function(){
+            if(checkEditBankName()){
+                editQuestionBankName();
+            }
+        });
+    }
+
+    function editQuestionBankName() {
+        var search=$("#hidden_search_bank").val();
+        var bankId=$("#edit_question_bank_id").val();
+        var bankName=$("#edit_bankname").val();
+        $('#edit_question_bank').modal('hide');
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/editquestionbank",
+            dataType: 'json',
+            data: {"bankId":bankId,"bankName":bankName,"search":search},
+            success: function(data){
+                if(data==true){
+                    initPage();
+                }
+                else{
+                    alert("题库重命名失败");
+                }
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--跳转添加题目-->
+    function addQuestionPage() {
+        var selected_bank=$("#selected_bank").val();
+        if(selected_bank==""){
+            $("#span_error").html("请先选择题库");
+            $("#add_question_page_btn").attr("type","button");
+            showError();
+        }
+        else
+            $("#add_question_page_btn").attr("type","submit");
+    }
+
+    <!--手动换页-->
+    function changePage() {
+        var newPageNum=$("#question_pageNum").val();
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var maxPageNum=$("#question_page_all_num").html();
+        if(!isNaN(newPageNum)){//是数字
+            if(Number(newPageNum)>Number(maxPageNum)||Number(newPageNum)<1)
+                $("#question_pageNum").val(oldPageNum);
+            else {
+                $("#question_pageNum").val(newPageNum);
+                $("#hidden_question_pageNum").val(newPageNum);
+                getQuestion($("#selected_bank").val(),newPageNum);
+            }
+        }
+        else if(isNaN(newPageNum)) {//非数字
+            $("#question_pageNum").val(oldPageNum);
+        }
+    }
+
+    <!--到第一页-->
+    function gotoFirstPage() {
+        if($("#question_pageNum").val()>1) {
+            getQuestion($("#selected_bank").val(), 1);
+        }
+    }
+
+    <!--上一页-->
+    function gotoPrePage() {
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var newPageNum=Number(oldPageNum)-1;
+        if(Number(oldPageNum)>1) {
+            getQuestion($("#selected_bank").val(), newPageNum);
+        }
+    }
+
+    <!--下一页-->
+    function gotoNextPage() {
+        var oldPageNum=$("#hidden_question_pageNum").val();
+        var maxPageNum=$("#question_page_all_num").html();
+        var newPageNum=Number(oldPageNum)+1;
+        if(Number(oldPageNum)+1<=Number(maxPageNum)) {
+            getQuestion($("#selected_bank").val(), newPageNum);
+        }
+    }
+
+    <!--到末页-->
+    function gotoLastPage() {
+        var maxPageNum=$("#question_page_all_num").html();
+        if($("#question_pageNum").val()<Number(maxPageNum)) {
+            getQuestion($("#selected_bank").val(), Number(maxPageNum));
+        }
+    }
+
+    <!--查看题目-->
+    function showQuestion(questionId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/showquestion",
+            dataType: 'json',
+            data: {"questionId":questionId},
+            success: function(data){
+                var kindName=data.questionKind.kindName;
+                var questionContent=data.questionContent;
+                var optionA=data.optionA;
+                var optionB=data.optionB;
+                var optionC=data.optionC;
+                var optionD=data.optionD;
+                var answer=data.questionAnsewer;
+                $("#modal_question_kind").html("");
+                $("#modal_question_content").html("");
+                $("#modal_optionA").html("");
+                $("#modal_optionB").html("");
+                $("#modal_optionC").html("");
+                $("#modal_optionD").html("");
+                $("#modal_answer").html("");
+
+                $("#modal_question_kind").html("题目类型:"+kindName+"<hr/>");
+                $("#modal_question_content").html("试题:"+questionContent+"<hr/>");
+                $("#modal_optionA").html("A:"+optionA+"<hr/>");
+                $("#modal_optionB").html("B:"+optionB+"<hr/>");
+                $("#modal_optionC").html("C:"+optionC+"<hr/>");
+                $("#modal_optionD").html("D:"+optionD+"<hr/>");
+                $("#modal_answer").html("答案:"+answer);
+
+                if(kindName=="")
+                    $("#modal_question_kind").attr("class","hide");
+                else
+                    $("#modal_question_kind").attr("class","show");
+
+                if(questionContent=="")
+                    $("#modal_question_content").attr("class","hide");
+                else
+                    $("#modal_question_content").attr("class","show");
+
+                if(optionA=="")
+                    $("#modal_optionA").attr("class","hide");
+                else
+                    $("#modal_optionA").attr("class","show");
+
+                if(optionB=="")
+                    $("#modal_optionB").attr("class","hide");
+                else
+                    $("#modal_optionB").attr("class","show");
+
+                if(optionC=="")
+                    $("#modal_optionC").attr("class","hide");
+                else
+                    $("#modal_optionC").attr("class","show");
+
+                if(optionD=="")
+                    $("#modal_optionD").attr("class","hide");
+                else
+                    $("#modal_optionD").attr("class","show");
+
+                if(answer=="")
+                    $("#modal_answer").attr("class","hide");
+                else
+                    $("#modal_answer").attr("class","show");
+                $('#show_question').modal('show')
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+    <!--删除题目-->
+    function deleteQuestion(questionId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/deletequestion",
+            dataType: 'json',
+            data: {"questionId":questionId},
+            success: function(data){
+                if(data==false){
+                    $("#span_error").html("题目删除失败");
+                    showError();
+                }
+                getQuestion($("#selected_bank").val(),$("#question_pageNum").val());
+            },
+            error: function(e){
+                alert("error");
+            }
+        })
+    }
+
+</script>
+
 </body>
 </html>
