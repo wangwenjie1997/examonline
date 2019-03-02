@@ -272,6 +272,7 @@ public class ExamUserController {
     @ResponseBody
     public boolean submitExam(int paperId,HttpSession session){
         User user= (User) session.getAttribute(Constants.USER_KEY);
+        resultServiceImpl.getAutoCheckGrade(user.getUserId(),paperId);
         return examUserServiceImpl.submitExam(user.getUserId(),paperId);
     }
 
@@ -396,6 +397,13 @@ public class ExamUserController {
     @ResponseBody
     public boolean editExamGrade(int paperId,int userId,Float examGrade){
         return examUserServiceImpl.editExamGrade(paperId,userId,examGrade);
+    }
+
+    @RequestMapping("/getcheckpapernum")
+    @ResponseBody
+    public int getCheckPaperNum(HttpSession session){
+        User u=(User)session.getAttribute(Constants.USER_KEY);
+        return  examUserServiceImpl.getCheckPaperNum(u);
     }
 
 }

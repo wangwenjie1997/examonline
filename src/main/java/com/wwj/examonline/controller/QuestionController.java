@@ -190,8 +190,7 @@ public class QuestionController {
         QuestionBank questionBank= (QuestionBank) session.getAttribute(Constants.SELECT_BANK);
         if(selected_bank!=questionBank.getBankId())
             log.info("QuestionController-addQuestion出错==>前端传送的选中题库Id和session中保存的选中题库Id不一致");
-        log.info("-------------"+answer);
-        if(questionServiceImpl.updateQuestion(questioncontent,answer,optionacontent,optionbcontent
+        if(questionServiceImpl.updateQuestion(selected_kind,questioncontent,answer,optionacontent,optionbcontent
                 ,optionccontent,optiondcontent,edit_question_id))
             request.setAttribute(Constants.ERROR_KEY,"修改成功");
         else
@@ -406,6 +405,15 @@ public class QuestionController {
         String JSON_root=new JSONObject().toJSONString(root,SerializerFeature.DisableCircularReferenceDetect);
         log.info("一页题库题目");
         log.info(JSON_root);
+        return JSON_root;
+    }
+
+    @RequestMapping("/getquestionsinfo")
+    @ResponseBody
+    public String getQuestionsInfo(HttpSession session){
+        User u=(User)session.getAttribute(Constants.USER_KEY);
+        Map<String,Object> root=questionServiceImpl.getQuestionsInfo(u);
+        String JSON_root=new JSONObject().toJSONString(root);
         return JSON_root;
     }
 

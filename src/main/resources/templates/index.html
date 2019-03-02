@@ -209,7 +209,136 @@
     <div class="main-content">
 
         <div class="page-content">
-            -----------------------------------------------------------------------------------------
+            <div class="page-header">
+                <h1>
+                    欢迎登录在线考试系统
+                    <span th:text="${session.user.getName()}" th:if="${session.user!=null}"></span>
+                </h1>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <div class="row">
+                        <div class="">
+                            <h4 class="widget-title lighter">
+                                <i class="ace-icon fa fa-star orange"></i>
+                                待批改试卷
+                            </h4>
+                        </div>
+                        <div>
+
+                            <div class="infobox infobox-blue infobox-small infobox-dark">
+                                <div class="infobox-progress">
+                                    <div class="easy-pie-chart percentage" data-percent="61" data-size="39" style="height: 39px; width: 39px; line-height: 38px;">
+                                        <div id="checkPaperNum"></div>
+                                    </div>
+                                </div>
+                                <div class="infobox-data">
+                                    待批改
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="hr hr32 hr-dotted"></div>
+                    <div class="row">
+                        <div class="">
+                            <h4 class="widget-title lighter">
+                                <i class="ace-icon fa fa-star orange"></i>
+                                试卷信息
+                            </h4>
+                        </div>
+                        <div>
+                            <div class="infobox infobox-green infobox-small infobox-dark">
+                                <div class="infobox-progress">
+                                    <div class="easy-pie-chart percentage" data-percent="61" data-size="39" style="height: 39px; width: 39px; line-height: 38px;">
+                                        <div id="allPaperNum"></div>
+                                    </div>
+                                </div>
+
+                                <div class="infobox-data">
+                                    试卷总数
+                                </div>
+                            </div>
+
+                            <div class="infobox infobox-blue infobox-small infobox-dark">
+                                <div class="infobox-progress">
+                                    <div class="easy-pie-chart percentage" data-percent="61" data-size="39" style="height: 39px; width: 39px; line-height: 38px;">
+                                        <div id="submitPaperNum"></div>
+                                    </div>
+                                </div>
+                                <div class="infobox-data">
+                                    已发布
+                                </div>
+                            </div>
+
+                            <div class="infobox infobox-grey infobox-small infobox-dark">
+                                <div class="infobox-progress">
+                                    <div class="easy-pie-chart percentage" data-percent="61" data-size="39" style="height: 39px; width: 39px; line-height: 38px;">
+                                        <div id="notSubmitPaperNum"></div>
+                                    </div>
+                                </div>
+
+                                <div class="infobox-data">
+                                    未发布
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hr hr32 hr-dotted"></div>
+                    <div class="row">
+                        <div class="">
+                            <h4 class="widget-title lighter">
+                                <i class="ace-icon fa fa-star orange"></i>
+                                题目信息
+                            </h4>
+                        </div>
+                        <div>
+                            <div class="infobox infobox-green infobox-small infobox-dark">
+                                <div class="infobox-progress">
+                                    <div class="easy-pie-chart percentage" data-percent="61" data-size="39" style="height: 39px; width: 39px; line-height: 38px;">
+                                        <div id="allQuestionNum"></div>
+                                    </div>
+                                </div>
+
+                                <div class="infobox-data">
+                                    题目总数
+                                </div>
+                            </div>
+
+                            <div class="infobox infobox-blue infobox-small infobox-dark">
+                                <div class="infobox-progress">
+                                    <div class="easy-pie-chart percentage" data-percent="61" data-size="39" style="height: 39px; width: 39px; line-height: 38px;">
+                                        <div id="usedQuestionNum"></div>
+                                    </div>
+                                </div>
+                                <div class="infobox-data">
+                                    已使用
+                                </div>
+                            </div>
+
+                            <div class="infobox infobox-grey infobox-small infobox-dark">
+                                <div class="infobox-progress">
+                                    <div class="easy-pie-chart percentage" data-percent="61" data-size="39" style="height: 39px; width: 39px; line-height: 38px;">
+                                        <div id="notUsedQuestionNum"></div>
+                                    </div>
+                                </div>
+
+                                <div class="infobox-data">
+                                    未使用
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.col -->
+            </div>
+
+            <!--<div id="checkPaperNum"></div>-->
+            <!--<div id="allPaperNum"></div>-->
+            <!--<div id="submitPaperNum"></div>-->
+            <!--<div id="notSubmitPaperNum"></div>-->
+            <!--<div id="allQuestionNum"></div>-->
+            <!--<div id="usedQuestionNum"></div>-->
+            <!--<div id="notUsedQuestionNum"></div>-->
         </div><!-- /.page-content -->
 
     </div><!-- /.main-content -->
@@ -250,6 +379,67 @@
 
 <!-- inline scripts related to this page -->
 <script type="text/javascript">
+    
+    $(document).ready(function () {
+        getCheckPaper();
+        getPaper();
+        getQuestion();
+    })
+
+    <!--待批改的试卷-->
+    function getCheckPaper() {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getcheckpapernum",
+            dataType: 'json',
+            data: {},
+            success: function (data) {
+                $("#checkPaperNum").html(data);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--试卷-->
+    function getPaper() {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getpapersinfo",
+            dataType: 'json',
+            data: {},
+            success: function (data) {
+                $("#allPaperNum").html(data.allPaperNum);
+                $("#submitPaperNum").html(data.submitPaperNum);
+                $("#notSubmitPaperNum").html(data.notSubmitPaperNum);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
+
+    <!--题目-->
+    function getQuestion() {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/getquestionsinfo",
+            dataType: 'json',
+            data: {},
+            success: function (data) {
+                $("#allQuestionNum").html(data.allQuestionNum);
+                $("#usedQuestionNum").html(data.usedQuestionNum);
+                $("#notUsedQuestionNum").html(data.notUsedQuestionNum);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
+    }
 
 </script>
 

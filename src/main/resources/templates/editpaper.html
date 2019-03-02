@@ -244,6 +244,7 @@
                                             <div class="form-group">
                                                 <label for="editpaperName"
                                                        class="col-xs-12 col-sm-3 col-md-3 control-label no-padding-right">试卷名称:</label>
+                                                <input type="hidden" id="oldPaperName" th:value="${edit_paper.getPaperName()}">
                                                 <div class="col-xs-12 col-sm-5">
                                                     <span class="block input-icon input-icon-right" th:if="${edit_paper.getPaperStart()==null}">
                                                         <input type="text" name="editpaperName" id="editpaperName"
@@ -490,6 +491,7 @@
 
     function editPaperNameBlur() {
         var paperName=$("#editpaperName").val();
+        var oldPaperName=$("#oldPaperName").val();
         flag=false;
         if(paperName==""){
             $("#editPaperName_err").html("<font color='red'>"+"试卷名不能为空"+"</font>");
@@ -500,7 +502,8 @@
             flag=false;
         }
         else {
-            $.ajax({
+            if(paperName!=oldPaperName)
+                $.ajax({
                 async: false,
                 type: 'POST',
                 url: "/checkpapername",
@@ -517,6 +520,8 @@
                     alert("error");
                 }
             })
+            else
+                flag=true;
         }
         return flag;
     }

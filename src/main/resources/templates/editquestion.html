@@ -288,6 +288,7 @@
                                                                 </h4>
 
                                                                 <div class="text-center">
+                                                                    <input type="hidden" id="initMoreOptionCounter" value="0">
                                                                     <button class="btn btn-sm" id="option_answerA" onclick="selectOption('A','option_answerA')">A </button>
                                                                     <button class="btn btn-sm" id="option_answerB" onclick="selectOption('B','option_answerB')">B</button>
                                                                     <button class="btn btn-sm" id="option_answerC" onclick="selectOption('C','option_answerC')">C</button>
@@ -940,20 +941,29 @@
     }
 
     function selectMoreOption(answer,optionBtnId) {
+        var initMoreOptionCounter=$("#initMoreOptionCounter").val();
+        initMoreOptionCounter++;
         var oldAnswer=$("#answer").val();
-        var newBtn='#'+optionBtnId;
-        answer=answer.toUpperCase();
-        var newAnswer="";
-        if(oldAnswer.indexOf(answer)>-1) {
-            newAnswer = oldAnswer.replace(answer, "");
-            $(newBtn).attr("class","btn btn-sm");
+        if(initMoreOptionCounter>oldAnswer.length){
+            var newBtn='#'+optionBtnId;
+            answer=answer.toUpperCase();
+            var newAnswer="";
+            if(oldAnswer.indexOf(answer)>-1) {
+                newAnswer = oldAnswer.replace(answer, "");
+                $(newBtn).attr("class","btn btn-sm");
+            }
+            else {
+                newAnswer = oldAnswer + answer;
+                $(newBtn).attr("class","btn btn-sm btn-primary");
+            }
+            var sortNewAnswer=newAnswer.split('').sort().join('');
+            $("#answer").val(sortNewAnswer);
         }
         else {
-            newAnswer = oldAnswer + answer;
-            $(newBtn).attr("class","btn btn-sm btn-primary");
+            $('#'+optionBtnId).attr("class","btn btn-sm btn-primary");
+            $("#initMoreOptionCounter").val(initMoreOptionCounter);
         }
-        var sortNewAnswer=newAnswer.split('').sort().join('');
-        $("#answer").val(sortNewAnswer);
+
     }
 
     function selectTrueOrFalse(answer) {

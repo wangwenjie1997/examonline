@@ -35,4 +35,8 @@ public interface ExamUserService {
 
     boolean editExamGrade(int paperId,int userId,Float examGrade);
 
+    int getCheckPaperNum(User user);
+
+    int getExamUserNum(int paperId);
+
 }

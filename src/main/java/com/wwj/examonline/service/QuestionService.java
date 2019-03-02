@@ -2,8 +2,10 @@ package com.wwj.examonline.service;
 
 import com.github.pagehelper.Page;
 import com.wwj.examonline.entity.Question;
+import com.wwj.examonline.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface QuestionService {
 
@@ -20,7 +22,7 @@ public interface QuestionService {
 
     boolean deleteQuestion(int questionId);
 
-    boolean updateQuestion(String questionContent,String questionAnsewer,String optionA
+    boolean updateQuestion(int questionKindId,String questionContent,String questionAnsewer,String optionA
             ,String optionB,String optionC,String optionD,int questionId);
 
     int getAllSearchQuestion(String questionContent,int bankId);
@@ -30,5 +32,7 @@ public interface QuestionService {
     Question getQuestion(int questionId);
 
     List<Integer> getAllQuestionIdByBankIdAndKind(int bankId,int kindId,String search);
+
+    Map<String,Object> getQuestionsInfo(User user);
 
 }

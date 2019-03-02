@@ -3,6 +3,8 @@ package com.wwj.examonline.serviceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wwj.examonline.entity.Question;
+import com.wwj.examonline.entity.QuestionBank;
+import com.wwj.examonline.entity.User;
 import com.wwj.examonline.mapper.QuestionBankMapper;
 import com.wwj.examonline.mapper.QuestionMapper;
 import com.wwj.examonline.service.QuestionService;
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -66,8 +70,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean updateQuestion(String questionContent, String questionAnsewer, String optionA, String optionB, String optionC, String optionD, int questionId) {
-        if(questionMapper.updateQuestion(questionContent,questionAnsewer,optionA,optionB,optionC,optionD,questionId)>0)
+    public boolean updateQuestion(int questionKindId,String questionContent, String questionAnsewer, String optionA, String optionB, String optionC, String optionD, int questionId) {
+        if(questionMapper.updateQuestion(questionKindId,questionContent,questionAnsewer,optionA,optionB,optionC,optionD,questionId)>0)
             return true;
         else
             return false;
@@ -101,6 +105,24 @@ public class QuestionServiceImpl implements QuestionService {
         else {
             return questionMapper.selectAllQuestionIdByBankIdAndKind(bankId, kindId);
         }
+    }
+
+    @Override
+    public Map<String, Object> getQuestionsInfo(User user) {
+        Map<String,Object> questionsNumMap=new HashMap<String,Object>();
+        int allQuestionNum=0;
+        int usedQuestionNum=0;
+        int notUsedQuestionNum=0;
+        List<QuestionBank> questionBanks=questionBankMapper.selectBankByCreator(user.getUserId());
+        for(int i=0;i<questionBanks.size();i++){
+            usedQuestionNum+=questionMapper.selectUsedQuestionNum(questionBanks.get(i).getBankId());
+            notUsedQuestionNum+=questionMapper.selectNotUsedQuestionNum(questionBanks.get(i).getBankId());
+        }
+        allQuestionNum=usedQuestionNum+notUsedQuestionNum;
+        questionsNumMap.put("allQuestionNum",allQuestionNum);
+        questionsNumMap.put("usedQuestionNum",usedQuestionNum);
+        questionsNumMap.put("notUsedQuestionNum",notUsedQuestionNum);
+        return questionsNumMap;
     }
 
 }

@@ -269,11 +269,11 @@
                                                             <div class="col-xs-6"><div class="dataTables_length" id="dynamic-table_length">
                                                                 <form method="post" action="#" th:action="@{/gotoaddquestionpage}">
                                                                     <!--存在选中题库-->
-                                                                    <input type="text" name="selectbank" id="selected_bank" th:value="${session.selected_bank.getBankId()}" th:if="${session.selected_bank!=null}">
+                                                                    <input type="hidden" name="selectbank" id="selected_bank" th:value="${session.selected_bank.getBankId()}" th:if="${session.selected_bank!=null}">
                                                                     <!--不存在选中题库-->
-                                                                    <input type="text" name="selectbank" id="selected_bank" value="" th:if="${session.selected_bank==null}">
+                                                                    <input type="hidden" name="selectbank" id="selected_bank" value="" th:if="${session.selected_bank==null}">
                                                                     <input type="hidden" name="selectedkind" value="-1">
-                                                                    <button type="button" id="add_question_page_btn" onclick="addQuestionPage()">添加题目</button>
+                                                                    <button type="button" id="add_question_page_btn" class="btn btn-sm btn-primary" onclick="addQuestionPage()">添加题目</button>
                                                                 </form>
 
                                                                 <!--每页显示个数-->
@@ -610,6 +610,7 @@
                 var str="";
                 if(data==""){
                     str="<span>没有题库</span>"
+                    $("#selected_bank").val("");
                 }
                 else{
                     str="<ul class='list-group'>";

@@ -2,8 +2,10 @@ package com.wwj.examonline.service;
 
 import com.github.pagehelper.Page;
 import com.wwj.examonline.entity.PaperInfo;
+import com.wwj.examonline.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PaperInfoService {
 
@@ -32,5 +34,7 @@ public interface PaperInfoService {
     boolean releasePaper(String paperStart,String paperEnd,int paperId);
 
     PaperInfo getExamPaper(int paperId);
+
+    Map<String,Object> getPapersInfo(User user);
 
 }

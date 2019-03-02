@@ -65,4 +65,10 @@ public interface ExamUserMapper {
     @Update("update examuser set examgrade=#{0} where examuser=#{1} and exampaper=#{2}")
     int updateGrade(Float examGrade,int userId,int paperId);
 
+    @Select("select count(*) from examuser where exampaper=#{0} and joinexam!=0 and examgrade!=-1")
+    int selectNotCheckNum(int paperId);
+
+    @Select("select count(*) from examuser where exampaper=#{0}")
+    int selectExamUserNum(int paperId);
+
 }

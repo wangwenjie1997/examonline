@@ -64,13 +64,9 @@ public class PaperContentServiceImpl implements PaperContentService {
         Question question=paperContent.getQuestion();
         int useNum=question.getUseNum();
         int questionId=question.getQuestionId();
-        if(useNum<=1){
-            questionMapper.deleteQuestionByQuestionId(questionId);
-        }
-        else if(useNum>1)
-            questionMapper.updateUseNumByQuestionId(useNum-1,questionId);
-
         paperContentMapper.deletePaperContentByPaperContentId(paperCotentId);
+
+        questionMapper.updateUseNumByQuestionId(useNum-1,questionId);
 
         return flag;
     }

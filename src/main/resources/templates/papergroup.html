@@ -277,10 +277,10 @@
                                                             <div class="dataTables_length" id="dynamic-table_length">
                                                             <form method="post" action="#" th:action="@{/gotoaddpaperpage}">
                                                                 <!--存在选中题库-->
-                                                                <input type="text" name="selectedgroup" id="selected_group" th:value="${session.selected_group.getPaperGroupId()}" th:if="${session.selected_group!=null}">
+                                                                <input type="hidden" name="selectedgroup" id="selected_group" th:value="${session.selected_group.getPaperGroupId()}" th:if="${session.selected_group!=null}">
                                                                 <!--不存在选中题库-->
-                                                                <input type="text" name="selectedgroup" id="selected_group" value="" th:if="${session.selected_group==null}">
-                                                                <button type="button" id="add_paper_page_btn" onclick="addPaperPage()">添加试卷</button>
+                                                                <input type="hidden" name="selectedgroup" id="selected_group" value="" th:if="${session.selected_group==null}">
+                                                                <button type="button" id="add_paper_page_btn" class="btn btn-sm btn-primary" onclick="addPaperPage()">添加试卷</button>
                                                             </form>
 
                                                             <!--每页显示个数-->
@@ -308,6 +308,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <input type="hidden" id="submitPaperNum" value="0">
                                                     <table id="dynamic-table" class="table table-striped table-bordered table-hover dataTable no-footer" role="grid" aria-describedby="dynamic-table_info">
                                                         <thead>
                                                         <tr role="row">
@@ -988,7 +989,8 @@
             success: function(data){
                 var str="";
                 if(data==""){
-                    str="<span>没有题库</span>"
+                    str="<span>没有题库</span>";
+                    $("#selected_group").val("");
                 }
                 else{
                     str="<ul class='list-group'>";
@@ -1001,7 +1003,7 @@
                             $("#selected_group").val(data[k].paperGroupId);
                         str+="<li class='list-group-item' id='"+data[k].paperGroupId+"'>" +
                             "<div><span><a onclick="+"'getPaper("+data[k].paperGroupId+",1)'>"+data[k].paperGroupName+"</a></span>" +
-                            "<div class='pull-right action-buttons'><a class='green' href='#' onclick=checkEdit("+data[k].paperGroupId+",'"+data[k].paperGroupName+"')>" +
+                            "<div class='pull-right action-buttons'><a class='green' href='#' onclick=checkPaperGroupNameEdit("+data[k].paperGroupId+",'"+data[k].paperGroupName+"')>" +
                             "<i class='ace-icon fa fa-pencil bigger-130'></i>" +
                             "</a>" +
                             "<a class='red' href='#' onclick='checkDelete("+data[k].paperGroupId+")'>" +
@@ -1028,6 +1030,9 @@
         $(getOldGroup).removeClass('active');
         $("#selected_group").val(groupId);
         $("#"+groupId).addClass('active');
+
+        var submitPaperNum=0;
+        $("#submitPaperNum").val(submitPaperNum);
 
         //加载试卷
         var search=$("#hidden_search_paper_content").val();
@@ -1076,7 +1081,7 @@
                                 "</a>" +
                                 "</td>" +
                                 "<td>" ;
-                            str+="<a href='#' onclick='showReleaseExamModal("+data.one_page_paper[k].paperId+")'>发布</a>";
+                            str+="<a href='#' onclick='checkSubmitPaper("+data.one_page_paper[k].paperId+")'>发布</a>";
                         }
                         else {
                             str+="<tr role='row' class='even'>" +
@@ -1086,39 +1091,74 @@
                                 "<div class='hidden-sm hidden-xs action-buttons'>" +
                                 "<a class='blue' href='gotoeditpaperpage?paperid="+data.one_page_paper[k].paperId+"'>" +
                                 "设置" +
-                                "</a>" +
-                                "<a class='red' href='#' onclick='deletePaper("+data.one_page_paper[k].paperId+",0)'>" +
-                                "删除" +
-                                "</a>" +
-                                "</div>" +
-                                "</td>" +
-                                "<td>"+
-                                "<a class='blue' href='#' onclick='showEditExamUserModal("+data.one_page_paper[k].paperId+",0)'>" +
-                                "考生管理" +
-                                "</a>" +
-                                "</td>" +
-                                "<td>"+
-                                "<a class='blue' href='#' onclick='showEditQuestionModal("+data.one_page_paper[k].paperId+",0)'>" +
-                                "题目管理" +
-                                "</a>" +
-                                "</td>" +
-                                "<td>" ;
+                                "</a>" ;
                             var startTime = stringToDate(data.one_page_paper[k].paperStart);
                             var endTime = stringToDate(data.one_page_paper[k].paperEnd);
                             var dateNow = new Date(Date.now());
                             if(endTime.getTime() < dateNow.getTime()){
+                                str+="<a class='red' href='#' onclick='deletePaper("+data.one_page_paper[k].paperId+",1)'>" +
+                                    "删除" +
+                                    "</a>" +
+                                    "</div>" +
+                                    "</td>" +
+                                    "<td>"+
+                                    "<a class='blue' href='#' onclick='showEditExamUserModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "考生管理" +
+                                    "</a>" +
+                                    "</td>" +
+                                    "<td>"+
+                                    "<a class='blue' href='#' onclick='showEditQuestionModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "题目管理" +
+                                    "</a>" +
+                                    "</td>" +
+                                    "<td>" ;
                                 str+="<a href='/gotomarkexam?pagename=markexam&paperId="+data.one_page_paper[k].paperId+"'>已结束</a>";
                             }
                             else if(startTime.getTime() > dateNow.getTime()){
+                                submitPaperNum++;
+                                str+="<a class='red' href='#' onclick='deletePaper("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "删除" +
+                                    "</a>" +
+                                    "</div>" +
+                                    "</td>" +
+                                    "<td>"+
+                                    "<a class='blue' href='#' onclick='showEditExamUserModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "考生管理" +
+                                    "</a>" +
+                                    "</td>" +
+                                    "<td>"+
+                                    "<a class='blue' href='#' onclick='showEditQuestionModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "题目管理" +
+                                    "</a>" +
+                                    "</td>" +
+                                    "<td>" ;
                                 str+="<a href='#' onclick='cancelRelease("+data.one_page_paper[k].paperId+")'>撤销发布</a>";
                             }
                             else {
+                                submitPaperNum++;
+                                str+="<a class='red' href='#' onclick='deletePaper("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "删除" +
+                                    "</a>" +
+                                    "</div>" +
+                                    "</td>" +
+                                    "<td>"+
+                                    "<a class='blue' href='#' onclick='showEditExamUserModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "考生管理" +
+                                    "</a>" +
+                                    "</td>" +
+                                    "<td>"+
+                                    "<a class='blue' href='#' onclick='showEditQuestionModal("+data.one_page_paper[k].paperId+",0)'>" +
+                                    "题目管理" +
+                                    "</a>" +
+                                    "</td>" +
+                                    "<td>" ;
                                 str+="<span>考试中</span>";
                             }
                             str+="  <a href='#' onclick='showExamTimeModal("+data.one_page_paper[k].paperId+")'>查看考试时间</a>";
                         }
                          str+="</td></tr>";
                     }
+                    $("#submitPaperNum").val(submitPaperNum);
                 }
                 $("#paper_tbody").html(str);
                 <!--加载题目-->
@@ -1249,7 +1289,7 @@
 
     <!--重命名题库-->
     <!--弹出重命名弹窗-->
-    function checkEdit(groupId,groupName) {
+    function checkPaperGroupNameEdit(groupId,groupName) {
         //清空添加分组弹框
         $("#add_groupname").val("");
         $("#add_groupname_err").empty();
@@ -1335,8 +1375,14 @@
     <!--删除分组-->
     <!--弹出删除弹窗-->
     function checkDelete(groupId) {
-        $("#delete_paper_group_id").val(groupId);
-        $('#delete_paper_group').modal('show');
+        if($("#submitPaperNum").val()>0){//存在已发布的试卷
+            $("#span_error").text("该分组存在已发布的试卷，不能删除");
+            $('#error').modal('show');
+        }
+        else if($("#submitPaperNum").val()==0){
+            $("#delete_paper_group_id").val(groupId);
+            $('#delete_paper_group').modal('show');
+        }
     }
 
     function deletePaperGroup() {
@@ -2129,7 +2175,6 @@
                 dataType: 'json',
                 data: {"paperContentId": paperContentId,"mark":mark},
                 success: function (data) {
-                    alert(data);
                     if(data==true)
                         getPaperContent();
                     else
@@ -2389,12 +2434,28 @@
     }
 
     <!--发布考试-->
-    function showReleaseExamModal(paperId) {
-        $("#release_paperId").val(paperId);
+    function checkSubmitPaper(paperId) {
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: "/checksubmitpaper",
+            dataType: 'json',
+            data: {"paperId": paperId},
+            success: function (data) {
+                if(data.root_result) {
+                    $("#release_paperId").val(paperId);
 
-        $('#release_exam_modal').modal('show');
+                    $('#release_exam_modal').modal('show');
 
-        $('#time').val(new Date().Format("yyyy-MM-dd hh:mm:ss"))
+                    $('#time').val(new Date().Format("yyyy-MM-dd hh:mm:ss"))
+                }
+                else
+                    showError(data.root_msg);
+            },
+            error: function (e) {
+                alert("error");
+            }
+        })
     }
 
     function releaseExam() {
@@ -2459,6 +2520,7 @@
     }
 
     function cancelRelease(paperId) {
+        var submitPaperNum=$("#submitPaperNum").val();
         $.ajax({
             async: false,
             type: 'POST',
@@ -2466,8 +2528,11 @@
             dataType: 'json',
             data: {"paperId":paperId},
             success: function(data){
-                if(data==true)
-                    getPaper($("#selected_group").val(),$("#paper_pageNum").val());
+                if(data==true) {
+                    getPaper($("#selected_group").val(), $("#paper_pageNum").val());
+                    submitPaperNum--;
+                    $("#submitPaperNum").val(submitPaperNum);
+                }
                 else
                     showError("撤销失败");
             },

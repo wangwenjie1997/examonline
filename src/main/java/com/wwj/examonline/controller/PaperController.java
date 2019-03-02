@@ -275,8 +275,13 @@ public class PaperController {
         Map<String,Object> root=new HashMap<String, Object>();
         List<ExamUser> examUsers=new ArrayList<ExamUser>();
 
-        List<ExamUser> allExamUser=examUserServiceImpl.selectExamUserByUserId(user.getUserId());
-        if(search!=""){
+        List<ExamUser> firAllExamUser=examUserServiceImpl.selectExamUserByUserId(user.getUserId());
+        List<ExamUser> allExamUser=new ArrayList<ExamUser>();
+        for(ExamUser examUser:firAllExamUser){
+            if(examUser.getPapeInfo().getPaperStart()!=null&&examUser.getPapeInfo().getPaperEnd()!=null)
+                allExamUser.add(examUser);
+        }
+//        if(search!=""){
             List<ExamUser> pageEamUser=new ArrayList<ExamUser>();
             for (ExamUser examUser:allExamUser){
                 if(examUser.getPapeInfo().getPaperName().indexOf(search)!=-1){
@@ -284,7 +289,6 @@ public class PaperController {
                     pageEamUser.add(examUser);
                 }
             }
-
             if(allExamNum!=0){
                 if(allExamNum%Constants.MYEXAM_PAGE_SIZE==0)
                     exam_page_all_num=allExamNum/Constants.MYEXAM_PAGE_SIZE;
@@ -310,30 +314,30 @@ public class PaperController {
             }
             for(int i=start;i<end;i++)
                 examUsers.add(pageEamUser.get(i));
-        }
-        else if (search==""){
-            allExamNum=allExamUser.size();
-            if(allExamNum!=0){
-                if(allExamNum%Constants.MYEXAM_PAGE_SIZE==0)
-                    exam_page_all_num=allExamNum/Constants.MYEXAM_PAGE_SIZE;
-                else
-                    exam_page_all_num=allExamNum/Constants.MYEXAM_PAGE_SIZE+1;
-            }
-            else if (allExamNum==0)
-                exam_page_all_num=1;
-
-            if(pageNum<=0)
-                pageNum=1;
-            if(pageNum>exam_page_all_num)
-                pageNum=exam_page_all_num;
-
-            examUsers=examUserServiceImpl.getPageExamUserTwo(user.getUserId(),pageNum,Constants.MYEXAM_PAGE_SIZE);
-
-            if(pageNum>1&&examUsers.size()<=0){
-                pageNum-=1;
-                examUsers=examUserServiceImpl.getPageExamUserTwo(user.getUserId(),pageNum,Constants.MYEXAM_PAGE_SIZE);
-            }
-        }
+//        }
+//        else if (search==""){
+//            allExamNum=allExamUser.size();
+//            if(allExamNum!=0){
+//                if(allExamNum%Constants.MYEXAM_PAGE_SIZE==0)
+//                    exam_page_all_num=allExamNum/Constants.MYEXAM_PAGE_SIZE;
+//                else
+//                    exam_page_all_num=allExamNum/Constants.MYEXAM_PAGE_SIZE+1;
+//            }
+//            else if (allExamNum==0)
+//                exam_page_all_num=1;
+//
+//            if(pageNum<=0)
+//                pageNum=1;
+//            if(pageNum>exam_page_all_num)
+//                pageNum=exam_page_all_num;
+//
+//            examUsers=examUserServiceImpl.getPageExamUserTwo(user.getUserId(),pageNum,Constants.MYEXAM_PAGE_SIZE);
+//
+//            if(pageNum>1&&examUsers.size()<=0){
+//                pageNum-=1;
+//                examUsers=examUserServiceImpl.getPageExamUserTwo(user.getUserId(),pageNum,Constants.MYEXAM_PAGE_SIZE);
+//            }
+//        }
 
         if(examUsers.size()>0)
             root.put("one_page_exam",examUsers);
@@ -515,6 +519,37 @@ public class PaperController {
     @ResponseBody
     public String getPaperAllGrade(int paperId){
         return ""+paperContentServiceImpl.getPaperAllGrade(paperId);
+    }
+
+    @RequestMapping("/getpapersinfo")
+    @ResponseBody
+    public String getPapersInfo(HttpSession session){
+        User u=(User)session.getAttribute(Constants.USER_KEY);
+        Map<String,Object> root=paperInfoServiceImpl.getPapersInfo(u);
+        String JSON_root=new JSONObject().toJSONString(root);
+        return JSON_root;
+    }
+
+    @RequestMapping("/checksubmitpaper")
+    @ResponseBody
+    public String checkSubmitPaper(int paperId){
+        boolean root_result=true;
+        String root_msg="";
+        Map<String,Object> root=new HashMap<String, Object>();
+        if(paperContentServiceImpl.getQuestionNumByPaperId(paperId)<=0){
+            root_result=false;
+            root_msg+="题目数不能为0";
+        }
+        if(examUserServiceImpl.getExamUserNum(paperId)<=0){
+            root_result=false;
+            if(root_msg.length()>0)
+                root_msg+=",";
+            root_msg+="考生数不能为0";
+        }
+        root.put("root_result",root_result);
+        root.put("root_msg",root_msg);
+        String JSON_root=new JSONObject().toJSONString(root);
+        return JSON_root;
     }
 
 }

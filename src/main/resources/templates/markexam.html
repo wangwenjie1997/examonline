@@ -509,12 +509,14 @@
             success: function (data) {
                 var str="";
                 if(data.length==0){
-                    str="<span>没有题库</span>";
+                    str="<span>没有待批改试卷</span>";
+                    $("#selectedPaper").val("");
                     $("#list_papers").html(str);
                 }
                 else{
                     if(paperId=="")
                         paperId=data[0].paperId;
+                    $("#selectedPaper").val(paperId);
                     str="<ul class='list-group'>";
                     for(var k in data){
                         str+="<li class='list-group-item' id='"+data[k].paperId+"'>" +

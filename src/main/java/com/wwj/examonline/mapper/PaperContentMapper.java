@@ -72,4 +72,12 @@ public interface PaperContentMapper {
     @Select("select sum(questionmark) from papercotent where paperid=#{0}")
     Float getPaperAllGrade(int paperId);
 
+    @Select("select * from papercotent where paperid=#{0} and questionmark=#{1}")
+    @Results({
+            @Result(id=true,column = "papercotentid",property = "paperCotentId"),
+            @Result(column="questionid",property="question",javaType= Question.class
+                    ,one=@One(select="com.wwj.examonline.mapper.QuestionMapper.selectQuestionByQuestionId",fetchType= FetchType.EAGER))
+    })
+    List<PaperContent> selectPapperContentByIdAndMark(int paperId,float questionMark);
+
 }

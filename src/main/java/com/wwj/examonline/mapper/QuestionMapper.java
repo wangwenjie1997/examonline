@@ -82,9 +82,9 @@ public interface QuestionMapper {
     int deleteQuestionFromDBByQuestionId(int questionId);
     //删除题目--结束
 
-    @Update("update question set questioncontent=#{0},questionansewer=#{1}" +
-            ",optiona=#{2},optionb=#{3},optionc=#{4},optiond=#{5} where questionid=#{6}")
-    int updateQuestion(String questionContent,String questionAnsewer,String optionA
+    @Update("update question set questiontype=#{0},questioncontent=#{1},questionansewer=#{2}" +
+            ",optiona=#{3},optionb=#{4},optionc=#{5},optiond=#{6} where questionid=#{7}")
+    int updateQuestion(int questionKindId,String questionContent,String questionAnsewer,String optionA
             ,String optionB,String optionC,String optionD,int questionId);
 
     //删除试卷时删除题目--开始
@@ -121,5 +121,10 @@ public interface QuestionMapper {
     @Select("select questionid from question where questionbank=#{0} and questiontype=#{1} and questioncontent like concat(concat('%',#{2}),'%') and statu=1")
     List<Integer> selectAllQuestionIdByBankIdAndKindFuzzySearch(int bankId,int questionKindId,String questionContent);
 
+    @Select("select count(*) from question where questionbank=#{0} and statu=1 and usenum=1")
+    int selectUsedQuestionNum(int bankId);
+
+    @Select("select count(*) from question where questionbank=#{0} and statu=1 and usenum=0")
+    int selectNotUsedQuestionNum(int bankId);
 
 }

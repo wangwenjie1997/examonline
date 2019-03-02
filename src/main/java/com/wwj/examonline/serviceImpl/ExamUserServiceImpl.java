@@ -3,11 +3,11 @@ package com.wwj.examonline.serviceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wwj.examonline.entity.ExamUser;
+import com.wwj.examonline.entity.PaperGroup;
+import com.wwj.examonline.entity.PaperInfo;
 import com.wwj.examonline.entity.User;
 import com.wwj.examonline.globle.Constants;
-import com.wwj.examonline.mapper.ExamUserMapper;
-import com.wwj.examonline.mapper.ResultMapper;
-import com.wwj.examonline.mapper.UserMapper;
+import com.wwj.examonline.mapper.*;
 import com.wwj.examonline.service.ExamUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,12 @@ public class ExamUserServiceImpl implements ExamUserService {
 
     @Autowired
     private ResultMapper resultMapper;
+
+    @Autowired
+    private PaperGroupMapper paperGroupMapper;
+
+    @Autowired
+    private PaperInfoMapper paperInfoMapper;
 
     @Override
     public String addOneExamUser(String mail,String name,int paperId) {
@@ -154,5 +160,23 @@ public class ExamUserServiceImpl implements ExamUserService {
             return true;
         else
             return false;
+    }
+
+    @Override
+    public int getCheckPaperNum(User user) {
+        int checkPaperNum=0;
+        List<PaperGroup> paperGroups=paperGroupMapper.selectPaperGroupByCreator(user.getUserId());
+        for(int i=0;i<paperGroups.size();i++){
+            List<PaperInfo> paperInfos=paperInfoMapper.selectPaperInfoByPaperGroupId(paperGroups.get(i).getPaperGroupId());
+            for(int j=0;j<paperInfos.size();j++){
+                checkPaperNum+=examUserMapper.selectNotCheckNum(paperInfos.get(j).getPaperId());
+            }
+        }
+        return checkPaperNum;
+    }
+
+    @Override
+    public int getExamUserNum(int paperId) {
+        return examUserMapper.selectExamUserNum(paperId);
     }
 }

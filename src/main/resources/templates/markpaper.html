@@ -69,7 +69,8 @@
                     <h4 class="widget-title" id="questionInfo">
                         <span id="paper_question_num"></span>
                         <span id="question_type"></span>
-                        <span id="question_mark"></span>
+                        <input type="hidden" id="question_mark"></input>
+                        <span id="show_question_mark"></span>
                     </h4>
                 </div>
                 <div class="widget-body">
@@ -297,7 +298,6 @@
         var userId=$("#userId").val();
         if($("#type").val()=='tea_mark'){//批改试卷
             $("#grade_div").removeClass('hide');
-
             $.ajax({//防止在批改完成后没有刷新旧网页再次点击批改
                 async: false,
                 type: 'POST',
@@ -318,7 +318,7 @@
                     }
                 },
                 error: function (e) {
-                    alert("error1");
+                    alert("error");
                 }
             })
 
@@ -357,7 +357,7 @@
 
                 },
                 error: function (e) {
-                    alert("error1");
+                    alert("error");
                 }
             })
         }
@@ -445,7 +445,7 @@
 
             },
             error: function(e){
-                alert("error2");
+                alert("error");
             }
         })
     }
@@ -486,7 +486,7 @@
                     $('#'+liId).addClass("btn-primary");
             },
             error: function (e) {
-                alert("error3");
+                alert("error");
             }
         })
     }
@@ -504,7 +504,8 @@
                 $("#paperContentId").val(data.paperContent.paperCotentId);
                 $("#paper_question_num").html("题"+liId+"    ");
                 $("#question_type").html(data.paperContent.question.questionKind.kindName+"   ");
-                $("#question_mark").html(data.paperContent.questionMark+"分");
+                $("#question_mark").val(data.paperContent.questionMark);
+                $("#show_question_mark").html(data.paperContent.questionMark+"分");
                 $("#questionContent").html(data.paperContent.question.questionContent);
 
                 $("input[type='radio']").removeAttr('checked');
@@ -619,7 +620,7 @@
                     $("#markGrade").val(data.resultMark);
             },
             error: function(e){
-                alert("error4");
+                alert("error");
             }
         })
 
@@ -657,7 +658,7 @@
     
     function checkMarkGrade() {
         var markGrade=$("#markGrade").val();
-        var questionGrade=$("#question_mark").html();
+        var questionGrade=$("#question_mark").val();
         var flag=true;
 
         if(markGrade==""){
@@ -667,7 +668,13 @@
         else {
             if(!isNaN(markGrade)){//是数字
                 if(Number(markGrade)>Number(questionGrade)){
+                    console.log(markGrade);
+                    console.log(questionGrade);
                     $("#markGrade_err").html("<font color='red'>分数不能大于设定分数</font>");
+                    flag=false;
+                }
+                else if(Number(markGrade)/0.5<1){
+                    $("#markGrade_err").html("<font color='red'>最小单位为0.5</font>");
                     flag=false;
                 }
             }
@@ -707,7 +714,7 @@
                 }
             },
             error: function (e) {
-                alert("error5");
+                alert("error");
             }
         })
     }
